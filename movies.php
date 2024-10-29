@@ -45,8 +45,7 @@ $total_movies = $total_row['total'];
 
 // Fetch movies data with filters and pagination
 $query = "SELECT MovieID, MovieName, MovieGenre, MoviePoster, MovieLength, MovieRating, MovieDesc 
-          FROM movies 
-          $where_sql
+          FROM movies
           ORDER BY MovieID ASC 
           LIMIT $movies_per_page OFFSET $offset";
 $result = $conn->query($query);
@@ -54,9 +53,7 @@ $result = $conn->query($query);
 // Fetch unique genres for the filter dropdown
 $genre_query = "SELECT DISTINCT MovieGenre FROM movies";
 $genre_result = $conn->query($genre_query);
-
 ?>
-
 
 <!DOCTYPE html>
 <html lang="en">
@@ -166,22 +163,25 @@ $genre_result = $conn->query($genre_query);
                                 <p><strong>Rating:</strong> <?php echo htmlspecialchars($row['MovieRating']); ?>/10</p>
                                 <p><strong>Description:</strong> <?php echo htmlspecialchars($row['MovieDesc']); ?></p>
                                 <!-- movie poster -->
+                                <!-- Tooltip for showing screening times -->
+                                <div class="tooltip"></div>
                         </div>
                 </div>
-            <?php endwhile; ?>
+        </div>
+    <?php endwhile; ?>
 
-            <div class="pagination">
-                <?php
-                // Calculate total pages
-                $total_pages = ceil($total_movies / $movies_per_page);
-                $link = "?page=$i&genre=" . urlencode($selected_genre) . "&search=" . urlencode($search_query);
-                if ($i == $page) {
-                    echo "<a class='active' href='$link'>$i</a>";
-                } else {
-                    echo "<a href='$link'>$i</a>";
-                }
-                ?>
-            </div>
+    <div class="pagination">
+        <?php
+        // Calculate total pages
+        $total_pages = ceil($total_movies / $movies_per_page);
+        $link = "?page=$i&genre=" . urlencode($selected_genre) . "&search=" . urlencode($search_query);
+        if ($i == $page) {
+            echo "<a class='active' href='$link'>$i</a>";
+        } else {
+            echo "<a href='$link'>$i</a>";
+        }
+        ?>
+    </div>
 
 </body>
 
@@ -278,6 +278,58 @@ toggle between hiding and showing the dropdown content */
             }
         }
     }
+
+    // Add event listener to movie elements
+    document.querySelectorAll('.movie').forEach(movie => {
+        movie.addEventListener('click', function() {
+            const movieID = this.dataset.movieId;
+            const tooltip = this.querySelector('.tooltip');
+
+            // Toggle tooltip visibility
+            tooltip.classList.toggle('active');
+
+            // Fetch screening times if not already loaded
+            if (!tooltip.innerHTML) {
+                fetch(`fetch_screenings.php?movie_id=${movieID}`)
+                    .then(response => response.json())
+                    .then(data => {
+                        let html = '';
+                        data.forEach(screening => {
+                            html += `
+                            <div class="time-tab" data-date="${screening.date}">
+                                ${screening.date}
+                            </div>
+                            <div class="time-blocks">
+                                ${screening.times.map(time => `
+                                    <div class="time-block" data-cost="${time.cost}" data-location="${time.location}">
+                                        ${time.time}
+                                    </div>
+                                `).join('')}
+                            </div>
+                        `;
+                        });
+                        html += '<a class="buy-now">Buy now</a>';
+                        tooltip.innerHTML = html;
+
+                        // Add event listener to each time block
+                        tooltip.querySelectorAll('.time-block').forEach(block => {
+                            block.addEventListener('click', function() {
+                                alert(`Cost: ${this.dataset.cost} | Location: ${this.dataset.location}`);
+                            });
+                        });
+
+                        // Add event listener to "Buy now" button
+                        tooltip.querySelector('.buy-now').addEventListener('click', function() {
+                            fetch(`add_to_cart.php?movie_id=${movieID}`)
+                                .then(response => response.text())
+                                .then(response => {
+                                    alert(response);
+                                });
+                        });
+                    });
+            }
+        });
+    });
 </script>
 
 <?php
