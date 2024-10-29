@@ -86,9 +86,19 @@ $conn->close();
         if ($result->num_rows > 0) {
             // User found
 
-            $token_id = bin2hex(random_bytes(16)); // Generate a random token
+            $row = $result->fetch_assoc();
+            echo "<li>" . htmlspecialchars($row["UserID"]) . "</li>";
+           
+            $token_id = $row["UserID"] . ":" . $row["Username"]; // Generate a random token
+            #$_SESSION['token_id'] = $token_id; // Store the token in the session
 
-            echo "<p>Login successful! Welcome, " . htmlspecialchars($user) . ".</p>";
+            $_SESSION['token_id'] = $token_id; //can store alr
+
+            // JavaScript alert and redirect
+            echo "<script>
+                alert('Login successful! Welcome, " . htmlspecialchars($user) . "');
+                window.location.href = 'profile.php';
+            </script>";
         } else {
             // User not found
             echo "<p>Invalid username or password. Please try again.</p>";
