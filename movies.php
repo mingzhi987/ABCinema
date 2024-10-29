@@ -16,28 +16,47 @@ if ($conn->connect_error) {
     die("Connection failed: " . $conn->connect_error);
 }
 
-// Fetch the movies data from the movies table
-$movies_query = $conn->query("SELECT * FROM movies");
+// Set the number of movies per page
+$movies_per_page = 10;
 
-while ($row = $movies_query->fetch_assoc()) {
-    $total_movies = $conn->query("SELECT COUNT * FROM movies");
-    echo $total_movies;
+// Determine the current page
+$page = isset($_GET['page']) ? (int)$_GET['page'] : 1;
+$offset = ($page - 1) * $movies_per_page;
 
-    // Calculate totals for 
-    $total_java_quantity += $row['java_quantity'];
-    $total_java_sales += ($row['java_sub_price'] * $row['java_quantity']);
+// Capture filter and search inputs
+$selected_genre = isset($_GET['genre']) ? $_GET['genre'] : 'All';
+$search_query = isset($_GET['search']) ? trim($_GET['search']) : '';
 
-    // Calculate totals for single shots
-    $total_single_shot_quantity += $row['cafe_single_quantity'] + $row['cappuccino_single_quantity'];
-    $total_single_shot_sales += ($row['cafe_single_sub_price'] * $row['cafe_single_quantity']) + ($row['cappuccino_single_sub_price'] * $row['cappuccino_single_quantity']);
-
-    // Calculate totals for double shots
-    $total_double_shot_quantity += $row['cafe_double_quantity'] + $row['cappuccino_double_quantity'];
-    $total_double_shot_sales += ($row['cafe_double_sub_price'] * $row['cafe_double_quantity']) + ($row['cappuccino_double_sub_price'] * $row['cappuccino_double_quantity']);
+// Generate SQL condition for genre and search
+$where_conditions = [];
+if ($selected_genre !== 'All') {
+    $where_conditions[] = "MovieGenre = '" . $conn->real_escape_string($selected_genre) . "'";
 }
+if (!empty($search_query)) {
+    $where_conditions[] = "MovieName LIKE '%" . $conn->real_escape_string($search_query) . "%'";
+}
+$where_sql = !empty($where_conditions) ? 'WHERE ' . implode(' AND ', $where_conditions) : '';
 
-$conn->close();
+// Count the total number of movies with filters
+$total_query = "SELECT COUNT(*) AS total FROM movies $where_sql";
+$total_result = $conn->query($total_query);
+$total_row = $total_result->fetch_assoc();
+$total_movies = $total_row['total'];
+
+// Fetch movies data with filters and pagination
+$query = "SELECT MovieID, MovieName, MovieGenre, MoviePoster, MovieLength, MovieRating, MovieDesc 
+          FROM movies 
+          $where_sql
+          ORDER BY MovieID ASC 
+          LIMIT $movies_per_page OFFSET $offset";
+$result = $conn->query($query);
+
+// Fetch unique genres for the filter dropdown
+$genre_query = "SELECT DISTINCT MovieGenre FROM movies";
+$genre_result = $conn->query($genre_query);
+
 ?>
+
 
 <!DOCTYPE html>
 <html lang="en">
@@ -45,46 +64,223 @@ $conn->close();
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="cs2_styles.css">
-    <title>Sales Reports By Categories | JavaJam Coffee House</title>
+    <link rel="stylesheet" href="abcmovies.css">
+    <title>Movies | ABCinema</title>
 </head>
 
 <body>
-    <div id="wrapper">
-        <header>
-            <h1>JavaJam Coffee House</h1>
-        </header>
-        <div class="content">
-            <h2>Sales Report - Categories</h2>
-            <table border="1">
-                <tr>
-                    <th>Categories</th>
-                    <th>Total Quantity Sold</th>
-                    <th>Total Sales ($)</th>
-                </tr>
-                <tr>
-                    <td>Java</td>
-                    <td><?php echo $total_java_quantity; ?></td>
-                    <td><?php echo number_format($total_java_sales, 2); ?></td>
-                </tr>
-                <tr>
-                    <td>Single Shot (Cafe and Cappuccino)</td>
-                    <td><?php echo $total_single_shot_quantity; ?></td>
-                    <td><?php echo number_format($total_single_shot_sales, 2); ?></td>
-                </tr>
-                <tr>
-                    <td>Double Shot (Cafe and Cappuccino)</td>
-                    <td><?php echo $total_double_shot_quantity; ?></td>
-                    <td><?php echo number_format($total_double_shot_sales, 2); ?></td>
-                </tr>
-            </table>
-            <br>
-            <a href="salesreport.php"><button>Go back to Report Selection</button></a>
+    <!-- Nav bar -->
+    <div class="header">
+        <a href="#default">
+            <img class=logo src="images/logo/logo.png" href="#">
+        </a>
+        <div class="header-left">
+            <a href="#contact" alt="Contact">Contact</a>
+            <a href="#about" alt="About">About us</a>
+        </div>
+        <div class="menu-icons">
+            <a href="#"><img src="images/icons/basket.svg" alt="Checkout" /></a>
+            <a href="#"><img src="images/icons/profile.svg" alt="Profile" /></a>
+        </div>
+    </div>
+
+    <!-- Top continer -->
+    <div class="top-promotion">
+
+        <!-- Slideshow container -->
+        <div class="slideshow-container">
+
+            <!-- Full-width images with number and caption text -->
+            <div class="mySlides fade">
+                <div class="numbertext">1 / 3</div>
+                <img src="images/movie_poster/horizontal/img1.jpg">
+                <div class="text">Jumanji</div>
+            </div>
+
+            <div class="mySlides fade">
+                <div class="numbertext">2 / 3</div>
+                <img src="images/movie_poster/horizontal/img2.jpg">
+                <div class="text">Smile 2</div>
+            </div>
+
+            <div class="mySlides fade">
+                <div class="numbertext">3 / 3</div>
+                <img src="images/movie_poster/horizontal/img3.jpg">
+                <div class="text">Star Wars</div>
+            </div>
+
+            <!-- Next and previous buttons -->
+            <a class="prev" onclick="plusSlides(-1)">&#10094;</a>
+            <a class="next" onclick="plusSlides(1)">&#10095;</a>
+        </div>
+        <br>
+
+        <!-- The dots/circles -->
+        <div style="text-align:center">
+            <span class="dot" onclick="currentSlide(1)"></span>
+            <span class="dot" onclick="currentSlide(2)"></span>
+            <span class="dot" onclick="currentSlide(3)"></span>
+        </div>
+    </div>
+
+    <!-- Movies -->
+    <div class="movies-container">
+        <div class="movies-row">
+            <hr class="dotted" />
+            <h1 class="movies-heading"> Now Showing </h1>
+            <hr class="dotted" />
+            <!-- Filter and Search Form -->
+            <div class="filter-container">
+                <form method="GET" action="">
+                    <label for="genre">Filter by Genre:</label>
+                    <select name="genre" id="genre">
+                        <option value="All">All</option>
+                        <?php while ($genre_row = $genre_result->fetch_assoc()): ?>
+                            <option value="<?php echo htmlspecialchars($genre_row['MovieGenre']); ?>"
+                                <?php echo $selected_genre === $genre_row['MovieGenre'] ? 'selected' : ''; ?>>
+                                <?php echo htmlspecialchars($genre_row['MovieGenre']); ?>
+                            </option>
+                        <?php endwhile; ?>
+                    </select>
+
+                    <label for="search">Search by Name:</label>
+                    <input type="text" name="search" id="search" value="<?php echo htmlspecialchars($search_query); ?>">
+
+                    <button type="submit">Apply</button>
+                </form>
+            </div>
+        </div>
+
+        <!-- Display movies -->
+        <div class="movies-row">
+
+            <?php while ($row = $result->fetch_assoc()): ?>
+                <div class="movies-column">
+                    <a class="movies" href="google.com">
+                        <div class="movies-card">
+                            <img id="poster" src="images/movie_poster/vertical/img1.jpg" alt="">
+                            <ul class="movie-details">
+                                <h2><?php echo htmlspecialchars($row['MovieName']); ?></h2>
+                                <p><strong>Genre:</strong> <?php echo htmlspecialchars($row['MovieGenre']); ?></p>
+                                <p><strong>Length:</strong> <?php echo htmlspecialchars($row['MovieLength']); ?> mins</p>
+                                <p><strong>Rating:</strong> <?php echo htmlspecialchars($row['MovieRating']); ?>/10</p>
+                                <p><strong>Description:</strong> <?php echo htmlspecialchars($row['MovieDesc']); ?></p>
+                                <!-- movie poster -->
+                        </div>
+                </div>
+            <?php endwhile; ?>
+
+            <div class="pagination">
+                <?php
+                // Calculate total pages
+                $total_pages = ceil($total_movies / $movies_per_page);
+                $link = "?page=$i&genre=" . urlencode($selected_genre) . "&search=" . urlencode($search_query);
+                if ($i == $page) {
+                    echo "<a class='active' href='$link'>$i</a>";
+                } else {
+                    echo "<a href='$link'>$i</a>";
+                }
+                ?>
+            </div>
+
 </body>
 
+<!-- Footer -->
 <footer>
-    <small><i>Copyright &copy; 2024 JavaJam Coffee House</i></small>
-    <br><small><a href="mailto:zhiming@lin.com"><i>zhiming@lin.com</i></a></small>
+    <div class="footer-container">
+        <div class="row">
+            <div class="column-1"><img class="logo" src="images/logo/logo.png">
+                <div class="footer-summary">Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat</div>
+            </div>
+
+            <div class="column-2">
+                <h4>Links</h4>
+                <ul>
+                    <li class="footer-links"><a href="http://demo.amytheme.com/movie/demo/elementor-single-cinema/" aria-current="page">Home</a></li>
+                    <li class="footer-links"><a href="http://demo.amytheme.com/movie/demo/elementor-single-cinema/coming-soon/">Coming Soon</a></li>
+                    <li class="footer-links"><a href="http://demo.amytheme.com/movie/demo/elementor-single-cinema/top-rated/">Top rated</a></li>
+                </ul>
+            </div>
+
+            <div class="column-2">
+                <h4>Contact Us</h4>
+                123 Raffles Place #14-01 <br> Singapore 348023
+                <p>support@abcinema.com.sg
+                <p>+65 63498203
+            </div>
+
+            <div class="column-2">
+                <h4>Follow Us</h4>
+                <img src="images/icons/twitter-x.svg" alt="X (Twitter)" />
+                <img src="images/icons/facebook.svg" alt="Facebook" />
+                <img src="images/icons/instagram.svg" alt="Instagram" />
+            </div>
+        </div>
+    </div>
+    </div>
 </footer>
 
 </html>
+
+<script>
+    let slideIndex = 1;
+    showSlides(slideIndex);
+
+    // Next/previous controls
+    function plusSlides(n) {
+        showSlides(slideIndex += n);
+    }
+
+    // Thumbnail image controls
+    function currentSlide(n) {
+        showSlides(slideIndex = n);
+    }
+
+    function showSlides(n) {
+        let i;
+        let slides = document.getElementsByClassName("mySlides");
+        let dots = document.getElementsByClassName("dot");
+        if (n > slides.length) {
+            slideIndex = 1
+        }
+        if (n < 1) {
+            slideIndex = slides.length
+        }
+        for (i = 0; i < slides.length; i++) {
+            slides[i].style.display = "none";
+        }
+        for (i = 0; i < dots.length; i++) {
+            dots[i].className = dots[i].className.replace(" active", "");
+        }
+        slides[slideIndex - 1].style.display = "block";
+        dots[slideIndex - 1].className += " active";
+        setTimeout(showSlides(slideIndex), 2000);
+    }
+
+    /* When the user clicks on the button,
+toggle between hiding and showing the dropdown content */
+    function sortbyFunction() {
+        document.getElementById("myDropdown").classList.toggle("show");
+    }
+
+    function filterFunction() {
+        var input, filter, ul, li, a, i;
+        input = document.getElementById("myInput");
+        filter = input.value.toUpperCase();
+        div = document.getElementById("myDropdown");
+        a = div.getElementsByTagName("a");
+        for (i = 0; i < a.length; i++) {
+            txtValue = a[i].textContent || a[i].innerText;
+            if (txtValue.toUpperCase().indexOf(filter) > -1) {
+                a[i].style.display = "";
+            } else {
+                a[i].style.display = "none";
+            }
+        }
+    }
+</script>
+
+<?php
+// Close the database connection
+$conn->close();
+?>

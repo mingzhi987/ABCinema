@@ -18,7 +18,9 @@ SET time_zone = "+00:00";
 /*!40101 SET NAMES utf8mb4 */;
 
 --
--- Database: `abcinema`
+CREATE database IF NOT EXISTS abcinema;
+
+USE abcinema;
 --
 
 -- --------------------------------------------------------
