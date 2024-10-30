@@ -17,7 +17,7 @@ if ($conn->connect_error) {
 }
 
 // Set the number of movies per page
-$movies_per_page = 10;
+$movies_per_page = 8;
 
 // Determine the current page
 $page = isset($_GET['page']) ? (int)$_GET['page'] : 1;
@@ -44,7 +44,7 @@ $total_row = $total_result->fetch_assoc();
 $total_movies = $total_row['total'];
 
 // Fetch movies data with filters and pagination
-$query = "SELECT MovieID, MovieName, MovieGenre, MoviePoster, MovieLength, MovieRating, MovieDesc 
+$query = "SELECT MovieID, MovieName, MovieGenre, MovieLength, MovieRating, MovieDesc 
           FROM movies
           ORDER BY MovieID ASC 
           LIMIT $movies_per_page OFFSET $offset";
@@ -81,7 +81,7 @@ $genre_result = $conn->query($genre_query);
         </div>
     </div>
 
-    <!-- Top continer -->
+    <!-- Top container -->
     <div class="top-promotion">
 
         <!-- Slideshow container -->
@@ -90,7 +90,7 @@ $genre_result = $conn->query($genre_query);
             <!-- Full-width images with number and caption text -->
             <div class="mySlides fade">
                 <div class="numbertext">1 / 3</div>
-                <img src="images/movie_poster/horizontal/img1.jpg">
+                <img src="images/logo/logo.png">
                 <div class="text">Jumanji</div>
             </div>
 
@@ -153,7 +153,7 @@ $genre_result = $conn->query($genre_query);
 
             <?php while ($row = $result->fetch_assoc()): ?>
                 <div class="movies-column">
-                    <a class="movies" href="google.com">
+                    <a class="movies">
                         <div class="movies-card">
                             <img id="poster" src="images/movie_poster/vertical/img1.jpg" alt="">
                             <ul class="movie-details">
@@ -167,22 +167,29 @@ $genre_result = $conn->query($genre_query);
                                 <div class="tooltip"></div>
                         </div>
                 </div>
-        </div>
-    <?php endwhile; ?>
+            <?php endwhile; ?>
+            </div>
 
     <div class="pagination">
-        <?php
-        // Calculate total pages
-        $total_pages = ceil($total_movies / $movies_per_page);
-        $link = "?page=$i&genre=" . urlencode($selected_genre) . "&search=" . urlencode($search_query);
-        if ($i == $page) {
-            echo "<a class='active' href='$link'>$i</a>";
-        } else {
-            echo "<a href='$link'>$i</a>";
-        }
-        ?>
-    </div>
+    <?php
+    // Calculate total pages
+    $total_pages = ceil($total_movies / $movies_per_page);
 
+    for ($i = 1; $i <= $total_pages; $i++) {
+        $url_params = http_build_query([
+            'page' => $i,
+            'genre' => $selected_genre,
+            'search' => $search_query,
+        ]);
+        if ($i == $page) {
+            echo "<a class='active' href='?$url_params'>$i</a>";
+        } else {
+            echo "<a href='?$url_params'>$i</a>";
+        }
+    }
+    ?>
+    </div>
+    </div>
 </body>
 
 <!-- Footer -->
