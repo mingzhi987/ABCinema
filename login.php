@@ -60,7 +60,9 @@ $conn->close();
     </form>
     <br/>
     <a href="sign_up.php">Sign up here</a>
-
+    <br/>
+    <a href="#" id="forget_password">Forget Password?</a>
+    
     <?php
     // Only proceed with the login check if form is submitted
     if (isset($_POST['login'])) {
@@ -109,5 +111,33 @@ $conn->close();
         $conn->close();
     }
     ?>
+    <script>
+       document.getElementById('forget_password').addEventListener('click', function() {
+            var email = prompt("Please enter your email:");
+            if (email) {
+                // Send AJAX request to render the email content
+                var xhr = new XMLHttpRequest();
+                xhr.open("POST", "send_reset_email.php", true);
+                xhr.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
+                
+                xhr.onreadystatechange = function() {
+                    if (xhr.readyState === 4) { // Request is complete
+                        if (xhr.status === 200) { // HTTP status OK
+                            var newWindow = window.open('', '_blank'); // Open a new window
+                            if (newWindow) { // Check if the new window was opened successfully
+                                newWindow.document.write(xhr.responseText); // Write the response to the new window
+                                newWindow.document.close(); // Close the document to render the HTML
+                            } else {
+                                console.error("Failed to open a new window. Please check your popup settings.");
+                            }
+                        } else {
+                            console.error("Error: " + xhr.status + " - " + xhr.statusText);
+                        }
+                    }
+                };
+                xhr.send("email=" + encodeURIComponent(email));
+            }
+        });
+    </script>
 </body>
 </html>

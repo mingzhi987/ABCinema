@@ -1,0 +1,17 @@
+{
+    "name": "chuac_pvtupth/ab-cinema",
+    "autoload": {
+        "psr-4": {
+            "ChuacPvtupth\\AbCinema\\": "src/"
+        }
+    },
+    "authors": [
+        {
+            "name": "Ksnaeh",
+            "email": "65495468+Ksnaeh@users.noreply.github.com"
+        }
+    ],
+    "require": {
+        "phpmailer/phpmailer": "^6.9"
+    }
+}

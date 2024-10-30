@@ -38,7 +38,23 @@ if ($result->num_rows > 0) {
     // echo json_encode(["success" => false, "message" => "User not found"]);
 }
 
+
+
+// Retrieve booking details
+$sql = "SELECT * FROM booking 
+        NATURAL JOIN shoppingcart 
+        NATURAL JOIN screeningtime2 
+        WHERE UserID = ". $userid ."";
+$query = $conn->prepare($sql);
+$query->execute();
+$bookingresult = $query->get_result();
+
+// Check if any booking details exist
+$hasBookings = $bookingresult->num_rows > 0;
+
+
 $stmt->close();
+$query->close();
 $conn->close();
 
 ?>
@@ -67,7 +83,34 @@ $conn->close();
     </p>
     <button id="savedetails" onclick="saveNewDetails()" disabled>Save Changes</button>
     <button onclick="location.href='logout.php'">Log Out</button>
-    
+    <br/>
+    <!-- Booking Details Section -->
+    <h2>Your Bookings</h2>
+
+    <?php if ($hasBookings): ?>
+        <table>
+            <tr>
+                <th>Booking ID</th>
+                <th>Screening Time</th>
+                <th>Item</th>
+                <th>Quantity</th>
+                <th>Total Price</th>
+                <!-- Add more columns based on your database fields -->
+            </tr>
+            <?php while ($row = $result->fetch_assoc()): ?>
+                <tr>
+                    <td><?php echo htmlspecialchars($row['BookingID']); ?></td>
+                    <td><?php echo htmlspecialchars($row['ScreeningTime']); ?></td>
+                    <td><?php echo htmlspecialchars($row['Item']); ?></td>
+                    <td><?php echo htmlspecialchars($row['Quantity']); ?></td>
+                    <td><?php echo htmlspecialchars($row['TotalPrice']); ?></td>
+                    <!-- Display other relevant booking details -->
+                </tr>
+            <?php endwhile; ?>
+        </table>
+    <?php else: ?>
+        <p>You have no tickets currently.</p>
+    <?php endif; ?>
     <script>
 
         var detailCheckPw = false;
