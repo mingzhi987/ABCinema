@@ -1,4 +1,6 @@
 <?php
+require 'dbconnection.php';
+
 session_start();
 
 if (!isset($_SESSION['token_id'])) {
@@ -6,36 +8,28 @@ if (!isset($_SESSION['token_id'])) {
     exit; // Redirect to login if not logged in
 }
 
-$token_id = $_SESSION['token_id'];
-
-// Split the token_id to get userid and username
-list($userid, $username) = explode(":", $token_id);
-
-
-
-// Database credentials
-$servername = "localhost";  // or your server's IP address
-$username = "root"; // replace with your MySQL username
-$password = ""; // replace with your MySQL password
-$database = "abcinema_db"; // replace with your database name
-
 $conn = new mysqli($servername, $username, $password, $database);
 if ($conn->connect_error) {
     echo json_encode(["success" => false, "message" => "Database connection failed"]);
     exit;
 }
 
-// Retrieve user details
-$sql = "SELECT Username, FullName, Email, DateOfBirth, Password FROM useraccount WHERE UserID = ". $userid ."";
+/// Retrieve user details using the login token
+$login_token = $_SESSION['token_id'];
+$sql = "SELECT * FROM useraccount WHERE login_token = ?";
 $stmt = $conn->prepare($sql);
+$stmt->bind_param("s", $login_token);
 $stmt->execute();
 $result = $stmt->get_result();
 
 if ($result->num_rows > 0) {
     $user = $result->fetch_assoc();
+    $userid = $user['UserID'];
     // echo json_encode(["success" => true, "user" => $user]);
 } else {
     // echo json_encode(["success" => false, "message" => "User not found"]);
+    header("Location: login.php");
+    exit;
 }
 
 

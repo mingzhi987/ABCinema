@@ -11,18 +11,8 @@ if ($conn->connect_error) {
     die("Connection failed: " . $conn->connect_error);
 }
 echo "Connected successfully";
-
-
-
-// SQL query to fetch data from useraccounts
-$sql = "SELECT * FROM useraccount";
-$result = $conn->query($sql);
-
-
-
 // Close the connection when done
 $conn->close();
-
 
 ?>
 
@@ -74,12 +64,18 @@ $conn->close();
             // User found
 
             $row = $result->fetch_assoc();
-            echo "<li>" . htmlspecialchars($row["UserID"]) . "</li>";
-           
-            $token_id = $row["UserID"] . ":" . $row["Username"]; // Generate a random token
-            #$_SESSION['token_id'] = $token_id; // Store the token in the session
 
-            $_SESSION['token_id'] = $token_id; //can store alr
+            // Generate a secure login token
+            $login_token = bin2hex(random_bytes(16));
+
+            // Store the login token in the database
+            $update_sql = "UPDATE useraccount SET login_token = ? WHERE UserID = ?";
+            $update_stmt = $conn->prepare($update_sql);
+            $update_stmt->bind_param("si", $login_token, $row['UserID']);
+            $update_stmt->execute();
+
+            // Store the login token in the session
+            $_SESSION['token_id'] = $login_token;
 
             // JavaScript alert and redirect
             echo "<script>
