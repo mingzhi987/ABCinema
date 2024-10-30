@@ -1,11 +1,7 @@
 <?php
 session_start();
 
-// Database credentials
-$servername = "localhost";  // or your server's IP address
-$username = "root"; // replace with your MySQL username
-$password = ""; // replace with your MySQL password
-$database = "abcinema_db"; // replace with your database name
+require 'dbconnection.php';
 
 // Create connection
 $conn = new mysqli($servername, $username, $password, $database);
@@ -22,17 +18,6 @@ echo "Connected successfully";
 $sql = "SELECT * FROM useraccount";
 $result = $conn->query($sql);
 
-// // Check if there are results and display them
-// if ($result->num_rows > 0) {
-//     // Output data of each row
-//     while($row = $result->fetch_assoc()) {
-//         echo "<pre>";
-//         print_r($row);  // Prints each row for debugging
-//         echo "</pre>";
-//     }
-// } else {
-//     echo "No results found.";
-// }
 
 
 // Close the connection when done
