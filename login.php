@@ -24,8 +24,6 @@ $conn->close();
     <link rel="stylesheet" href="all_styles.css">
 </head>
 <body>
-
-
     <div class="header-content" style="text-align: center;">
         <h2>Sign In / Sign Up</h2>
 
@@ -59,7 +57,9 @@ $conn->close();
         <p>Forgot your password? <a href="#" id="forget_password">Forget Password?</a></p>
     </div>
     
-
+    <div class="footer-content">
+        <p>&copy; 2021</p>
+    </div>
 
 
     <?php
