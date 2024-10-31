@@ -58,6 +58,7 @@ $conn->close();
 <head>
     <meta charset="UTF-8">
     <title>User Profile</title>
+    <link rel="stylesheet" href="all_styles.css">
 </head>
 <body>
     <h2>User Profile</h2>

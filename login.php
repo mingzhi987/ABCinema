@@ -10,7 +10,7 @@ $conn = new mysqli($servername, $username, $password, $database);
 if ($conn->connect_error) {
     die("Connection failed: " . $conn->connect_error);
 }
-echo "Connected successfully";
+echo "<script>console.log('connection success!')</script>";
 // Close the connection when done
 $conn->close();
 
@@ -21,23 +21,47 @@ $conn->close();
 <head>
     <meta charset="UTF-8">
     <title>Login</title>
+    <link rel="stylesheet" href="all_styles.css">
 </head>
 <body>
-    <h2>Login</h2>
-    <form method="post" action="">
-        <label for="username">Username:</label>
-        <input type="text" id="username" name="username" required>
-        <br>
-        <label for="password">Password:</label>
-        <input type="password" id="password" name="password" required>
-        <br>
-        <button type="submit" name="login">Login</button>
-    </form>
-    <br/>
-    <a href="sign_up.php">Sign up here</a>
-    <br/>
-    <a href="#" id="forget_password">Forget Password?</a>
+
+
+    <div class="header-content" style="text-align: center;">
+        <h2>Sign In / Sign Up</h2>
+
+        <!-- Insert logo here -->
+
+        <!-- Insert navbar here -->
+        <div class="navbar-header">
+        </div>
+
+        <!-- Insert sign in account here -->
+    </div>
+
+    <div class="body-content">
+        <div class="header">
+            <h2>Sign In / Sign Up</h2>
+        </div>
+        <div class="sign-up-in-form">
+            <h3>Sign In</h3>
+            <form method="post" action="">
+                <label for="username">Username:</label>
+                <input type="text" id="username" name="username" required>
+                <br>
+                <label for="password">Password:</label>
+                <input type="password" id="password" name="password" required>
+                <br>
+                <button type="submit" name="login">Login</button>
+            </form>
+        </div>
+        <br/>
+        <p>New here? <a href="sign_up.php">Sign up here</a></p>
+        <p>Forgot your password? <a href="#" id="forget_password">Forget Password?</a></p>
+    </div>
     
+
+
+
     <?php
     // Only proceed with the login check if form is submitted
     if (isset($_POST['login'])) {
