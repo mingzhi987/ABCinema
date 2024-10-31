@@ -105,6 +105,9 @@ $conn->close();
     <?php else: ?>
         <p>You have no tickets currently.</p>
     <?php endif; ?>
+    
+    <p><a href="display_movie_info.php">Go to Display Movie Info</a></p>
+
     <script>
 
         var detailCheckPw = false;
