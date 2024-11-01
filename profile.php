@@ -59,56 +59,6 @@ $conn->close();
     <meta charset="UTF-8">
     <title>User Profile</title>
     <link rel="stylesheet" href="all_styles.css">
-</head>
-<body>
-    <h2>User Profile</h2>
-    <p><strong>Username:</strong> <?php echo htmlspecialchars($user['Username']); ?></p>
-    <p><strong>Full Name:</strong> <?php echo htmlspecialchars($user['FullName']); ?></p>
-    <p><strong>Email:</strong> <?php echo htmlspecialchars($user['Email']); ?></p>
-    <p><strong>Date of Birth:</strong> <?php echo htmlspecialchars($user['DateOfBirth']); ?></p>
-    <br/>
-    <!-- Password field for editing -->
-    <p><strong>Edit Password:</strong> 
-        <input type="password" id="password" disabled>
-        <input type="checkbox" onclick="togglePasswordEdit()"> Edit
-    </p>
-    <p><strong>Edit Email:</strong> 
-        <input type="email" id="email" disabled>
-        <input type="checkbox" onclick="toggleEmailEdit()"> Edit
-    </p>
-    <button id="savedetails" onclick="saveNewDetails()" disabled>Save Changes</button>
-    <button onclick="location.href='logout.php'">Log Out</button>
-    <br/>
-    <!-- Booking Details Section -->
-    <h2>Your Bookings</h2>
-
-    <?php if ($hasBookings): ?>
-        <table>
-            <tr>
-                <th>Booking ID</th>
-                <th>Screening Time</th>
-                <th>Item</th>
-                <th>Quantity</th>
-                <th>Total Price</th>
-                <!-- Add more columns based on your database fields -->
-            </tr>
-            <?php while ($row = $result->fetch_assoc()): ?>
-                <tr>
-                    <td><?php echo htmlspecialchars($row['BookingID']); ?></td>
-                    <td><?php echo htmlspecialchars($row['ScreeningTime']); ?></td>
-                    <td><?php echo htmlspecialchars($row['Item']); ?></td>
-                    <td><?php echo htmlspecialchars($row['Quantity']); ?></td>
-                    <td><?php echo htmlspecialchars($row['TotalPrice']); ?></td>
-                    <!-- Display other relevant booking details -->
-                </tr>
-            <?php endwhile; ?>
-        </table>
-    <?php else: ?>
-        <p>You have no tickets currently.</p>
-    <?php endif; ?>
-    
-    <p><a href="display_movie_info.php">Go to Display Movie Info</a></p>
-
     <script>
 
         var detailCheckPw = false;
@@ -165,5 +115,56 @@ $conn->close();
         }
 
     </script>
+</head>
+<body>
+    <h2>User Profile</h2>
+    <p><strong>Username:</strong> <?php echo htmlspecialchars($user['Username']); ?></p>
+    <p><strong>Full Name:</strong> <?php echo htmlspecialchars($user['FullName']); ?></p>
+    <p><strong>Email:</strong> <?php echo htmlspecialchars($user['Email']); ?></p>
+    <p><strong>Date of Birth:</strong> <?php echo htmlspecialchars($user['DateOfBirth']); ?></p>
+    <br/>
+    <!-- Password field for editing -->
+    <p><strong>Edit Password:</strong> 
+        <input type="password" id="password" disabled>
+        <input type="checkbox" onclick="togglePasswordEdit()"> Edit
+    </p>
+    <p><strong>Edit Email:</strong> 
+        <input type="email" id="email" disabled>
+        <input type="checkbox" onclick="toggleEmailEdit()"> Edit
+    </p>
+    <button id="savedetails" onclick="saveNewDetails()" disabled>Save Changes</button>
+    <button onclick="location.href='logout.php'">Log Out</button>
+    <br/>
+    <!-- Booking Details Section -->
+    <h2>Your Bookings</h2>
+
+    <?php if ($hasBookings): ?>
+        <table>
+            <tr>
+                <th>Booking ID</th>
+                <th>Screening Time</th>
+                <th>Item</th>
+                <th>Quantity</th>
+                <th>Total Price</th>
+                <!-- Add more columns based on your database fields -->
+            </tr>
+            <?php while ($row = $result->fetch_assoc()): ?>
+                <tr>
+                    <td><?php echo htmlspecialchars($row['BookingID']); ?></td>
+                    <td><?php echo htmlspecialchars($row['ScreeningTime']); ?></td>
+                    <td><?php echo htmlspecialchars($row['Item']); ?></td>
+                    <td><?php echo htmlspecialchars($row['Quantity']); ?></td>
+                    <td><?php echo htmlspecialchars($row['TotalPrice']); ?></td>
+                    <!-- Display other relevant booking details -->
+                </tr>
+            <?php endwhile; ?>
+        </table>
+    <?php else: ?>
+        <p>You have no tickets currently.</p>
+    <?php endif; ?>
+    
+    <p><a href="movies.php">Go to Home page</a></p>
+
+
 </body>
 </html>

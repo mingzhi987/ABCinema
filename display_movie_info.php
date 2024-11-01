@@ -3,9 +3,11 @@ session_start();
 require 'dbconnection.php';
 
 // MovieID to be displayed
-$movieID = 1;
-
-echo 'lanjiao: ' . $movieID;
+if (isset($_GET['movieID'])){
+    $movieID = intval($_GET['movieID']);
+} else {
+    die('MovieID not specified.');
+}
 
 // Create connection
 $conn = new mysqli($servername, $username, $password, $database);
@@ -97,35 +99,44 @@ $conn->close();
         <h1>Booking</h1>
     </div>
     <div class="body-content">
-    <h1><?php echo htmlspecialchars($movie['MovieName']); ?></h1>
-    <p>Genre: <?php echo htmlspecialchars($movie['MovieGenre']); ?></p>
-    <p>Length: <?php echo htmlspecialchars($movie['MovieLength']); ?> minutes</p>
-    <p>Synopsis: <?php echo htmlspecialchars($movie['MovieDesc']) ?></p>
-    <p>Rating: <?php echo htmlspecialchars($movie['MovieRating']); ?></p>
-    <img src="<?php echo htmlspecialchars($movie['MoviePoster']); ?>" alt="<?php echo htmlspecialchars($movie['MovieName']); ?>">
+        <h2 style="margin-bottom: 30px;">Booking Page</h2>
+        <table>
+            <tr>
+                <td>
+                <img src="<?php echo htmlspecialchars($movie['MoviePoster']); ?>" alt="<?php echo htmlspecialchars($movie['MovieName']); ?>" style="width: 300px;">
+                </td>
+                <td>
+                    <h1><?php echo htmlspecialchars($movie['MovieName']); ?></h1>
+                    <p><strong>Genre:</strong> <?php echo htmlspecialchars($movie['MovieGenre']); ?></p>
+                    <p><strong>Length:</strong> <?php echo htmlspecialchars($movie['MovieLength']); ?> minutes</p>
+                    <p><strong>Synopsis:</strong> <?php echo htmlspecialchars($movie['MovieDesc']); ?></p>
+                    <p><strong>Rating:</strong> <?php echo htmlspecialchars($movie['MovieRating']); ?></p>
 
-    <?php if ($isLoggedIn): ?>
-    <h2>Select Screening Date</h2>
-    <form method="post" action="add_movie_to_cart.php">
-        <label for="screening_date">Screening Date:</label>
-        <select name="screening_date" id="screening_date" required onchange="fetchSeats(this.value)">
-            <option value="">Select a date</option>
-            <?php while ($screening = $screeningResult->fetch_assoc()): ?>
-                <option value="<?php echo htmlspecialchars($screening['ScreenTimeID']); ?>">
-                    <?php echo htmlspecialchars($screening['ScreenTimeDate']); ?>
-                </option>
-            <?php endwhile; ?>
-        </select>
+                    <?php if ($isLoggedIn): ?>
+                    <h2>Select Screening Date</h2>
+                    <form method="post" action="add_movie_to_cart.php">
+                        <label for="screening_date">Screening Date:</label>
+                        <select name="screening_date" id="screening_date" required onchange="fetchSeats(this.value)">
+                            <option value="">Select a date</option>
+                            <?php while ($screening = $screeningResult->fetch_assoc()): ?>
+                                <option value="<?php echo htmlspecialchars($screening['ScreenTimeID']); ?>">
+                                    <?php echo htmlspecialchars($screening['ScreenTimeDate']); ?>
+                                </option>
+                            <?php endwhile; ?>
+                        </select>
 
-        <h2>Select Seats</h2>
-        <div id="seats-container"></div>
+                        <h2>Select Seats</h2>
+                        <div id="seats-container"></div>
 
-        <button type="submit">Book Now</button>
-    </form>
-    <?php else: ?>
-        <p>Please log in or sign up to purchase tickets!</p>
-        <a href="login.php"><button>Log In / Sign Up</button></a>
-    <?php endif; ?>
+                        <button type="submit">Book Now</button>
+                    </form>
+                    <?php else: ?>
+                        <p>Please log in or sign up to purchase tickets!</p>
+                        <a href="login.php"><button>Log In / Sign Up</button></a>
+                    <?php endif; ?>
+                </td>
+            </tr>
+        </table>
     </div>
 
     <div class="footer-content">
