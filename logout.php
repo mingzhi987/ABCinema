@@ -1,4 +1,5 @@
 <?php
+    session_start();
     require 'dbconnection.php';
 
     // Check if the user is logged in
@@ -26,7 +27,6 @@
         $conn->close();
     }
 
-    session_start();
     session_unset();
     session_destroy();
     header("Location: login.php"); // Redirect to login page

@@ -38,27 +38,28 @@ $conn->close();
 
     <div class="body-content">
         <div class="header">
-            <h2>Sign In / Sign Up</h2>
+            <h1>Sign In / Sign Up</h1>
         </div>
         <div class="sign-up-in-form">
-            <h3>Sign In</h3>
-            <form method="post" action="">
+            <h2 style="margin-top: 30px;"><u>Sign In</u></h2>
+            <form id="sign_in" method="post" action="">
                 <label for="username">Username:</label>
                 <input type="text" id="username" name="username" required>
-                <br>
+                
                 <label for="password">Password:</label>
                 <input type="password" id="password" name="password" required>
-                <br>
+                
                 <button type="submit" name="login">Login</button>
             </form>
+            <br/>
+            <p>New here? <a href="sign_up.php">Sign up here</a></p>
+            <p style="margin-bottom: 30px; margin-top: 20px;">Forgot your password? <a href="#" id="forget_password">Forget Password?</a></p>
         </div>
         <br/>
-        <p>New here? <a href="sign_up.php">Sign up here</a></p>
-        <p>Forgot your password? <a href="#" id="forget_password">Forget Password?</a></p>
     </div>
     
     <div class="footer-content">
-        <p>&copy; 2021</p>
+        <p>ABCinema, &copy; 2021</p>
     </div>
 
 

@@ -5,6 +5,8 @@ require 'dbconnection.php';
 // MovieID to be displayed
 $movieID = 1;
 
+echo 'lanjiao: ' . $movieID;
+
 // Create connection
 $conn = new mysqli($servername, $username, $password, $database);
 
@@ -26,9 +28,8 @@ if ($result->num_rows > 0) {
     die("Movie not found.");
 }
 
-$isLoggedIn = isset($_SESSION['token_id']);
+$isLoggedIn = isset(($_SESSION["token_id"]));
 
-echo "wtf: " . $isLoggedIn;
 
 if ($isLoggedIn) {
     // Retrieve available screening dates
@@ -49,8 +50,9 @@ $conn->close();
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="all_styles.css">
+    
     <title><?php echo htmlspecialchars($movie['MovieName']); ?></title>
+    <link rel="stylesheet" href="all_styles.css">
     <script>
 
         //call seats when date selected
@@ -91,12 +93,16 @@ $conn->close();
     </script>
 </head>
 <body>
+    <div class="header-content">
+        <h1>Booking</h1>
+    </div>
+    <div class="body-content">
     <h1><?php echo htmlspecialchars($movie['MovieName']); ?></h1>
     <p>Genre: <?php echo htmlspecialchars($movie['MovieGenre']); ?></p>
     <p>Length: <?php echo htmlspecialchars($movie['MovieLength']); ?> minutes</p>
     <p>Synopsis: <?php echo htmlspecialchars($movie['MovieDesc']) ?></p>
     <p>Rating: <?php echo htmlspecialchars($movie['MovieRating']); ?></p>
-    <img src="<?php echo htmlspecialchars($movie['MovieImg']); ?>" alt="<?php echo htmlspecialchars($movie['MovieName']); ?>">
+    <img src="<?php echo htmlspecialchars($movie['MoviePoster']); ?>" alt="<?php echo htmlspecialchars($movie['MovieName']); ?>">
 
     <?php if ($isLoggedIn): ?>
     <h2>Select Screening Date</h2>
@@ -120,5 +126,10 @@ $conn->close();
         <p>Please log in or sign up to purchase tickets!</p>
         <a href="login.php"><button>Log In / Sign Up</button></a>
     <?php endif; ?>
+    </div>
+
+    <div class="footer-content">
+        <p>ABCinema, &copy; 2021</p>
+    </div>
 </body>
 </html>
