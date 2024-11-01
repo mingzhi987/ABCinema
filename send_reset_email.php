@@ -59,7 +59,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $mail->Port = 587;
 
             // Email settings
-            $mail->setFrom('adamcheehean01@gmail.com', 'Your Name');
+            $mail->setFrom('adamcheehean01@gmail.com', 'ABC Cinema');
             $mail->addAddress($email); // Recipient email address
             $mail->Subject = 'Password Reset Request';
             $mail->isHTML(true);
