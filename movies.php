@@ -1,5 +1,5 @@
 <?php
-
+session_start();
 require 'dbconnection.php';
 
 // Connect to the database
@@ -100,7 +100,11 @@ if ($genresResult->num_rows > 0) {
         </div>
         <div class="menu-icons">
             <a href="checkout.php"><img src="images/icons/basket.svg" alt="Checkout" /></a>
-            <a href="profile.php"><img src="images/icons/profile.svg" alt="Profile" /></a>
+            <?php if (isset($_SESSION['token_id'])): ?>
+                <a href="profile.php"><img src="images/icons/profile.svg" alt="Profile" /></a>
+            <?php else: ?>
+                <a href="login.php"><img src="images/icons/profile.svg" alt="Login" /></a>
+            <?php endif; ?>
         </div>
     </div>
 
