@@ -152,15 +152,13 @@ while ($row = $result->fetch_assoc()) {
         <?php else: ?>
             <p>Your cart is empty.</p>
         <?php endif; ?>
-
-        <a href="sign_up.php" class="join-btn">Join us as a member</a>
     </div>
 
-    <div id="myAlert">
+    <!-- <div id="myAlert">
         <h2>Booking Confirmed!</h2>
         <p>Your booking has been confirmed and sent to your email.</p>
         <button onclick="closeAlert()">Close</button>
-    </div>
+    </div> -->
 
     <!-- Footer -->
     <footer>
@@ -200,21 +198,13 @@ while ($row = $result->fetch_assoc()) {
 </html>
 
 <script>
-    function checkout() {
+    function checkoutAlert() {
+        if (confirm("Confirm checkout?")) {
 
-        function checkoutAlert() {
-            document
-                .getElementById("myAlert")
-                .style
-                .display = "block";
-            window.location.href = 'email_confirmation.php';
-        }
+            //send email on booking success
+            window.location.href = "email_send_tester.php";
 
-        function closeAlert() {
-            document
-                .getElementById("myAlert")
-                .style
-                .display = "none";
+            //AJAX call to php page to save shopping cart details and additional nonsense to "booking" table
         }
     }
 </script>
