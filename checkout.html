@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="abcmovies.css">
+    <link rel="stylesheet" href="cart.css">
+    <title>Checkout | ABCinema</title>
+</head>
+
+<body>
+    <!-- Nav bar -->
+    <div class="header">
+        <a href="movíes.php">
+            <img class=logo src="images/logo/logo.png">
+        </a>
+        <div class="header-left">
+            <a href="#movies" alt="Contact">Movies</a>
+            <a href="#about" alt="About">About us</a>
+        </div>
+        <div class="header-right">
+            <a href="#"><img src="images/icons/basket.svg" alt="Checkout" /></a>
+            <a href="#"><img src="images/icons/profile.svg" alt="Profile" /></a>
+        </div>
+    </div>
+
+    <!-- ShoppingCart -->
+    <div class="container">
+        <h1>Shopping Cart</h1>
+
+        <?php if (count($items) > 0): ?>
+            <table>
+                <tr>
+                    <th id="small-col">Item No.</th>
+                    <th>Information</th>
+                    <th>No. of tickets</th>
+                    <th>Total Cost</th>
+                </tr>
+                <?php foreach ($items as $item): ?>
+                    <tr>
+                        <td>1</td>
+                        <td>
+                        <div class="container-ticket">
+                            <img src="images/movie_poster/vertical/avatar.jpg" alt="avatar">
+                            <div class="info">
+                                <h2>Movie Title</h2>
+                                <p>Cinema Number:</p>
+                            </div>
+                        </div>
+                        </td>
+                        <td> 2 (1030am)
+                            <br> Seat 1, 2
+                            <br>
+                            <br> 1 (930pm)
+                            <br> Seat 4
+                        </td>
+                        <td> $18.40</td>
+
+                    </tr>
+                <?php endforeach; ?>
+            </table>
+
+            <div class="total-price">
+                <strong>Total Price:</strong> $<?php echo number_format($totalPrice, 2); ?>
+            </div>
+            <button onclick="alert('Your booking has been confirmed and sent to your email.')">Checkout</button>
+        <?php else: ?>
+            <p>Your cart is empty.</p>
+        <?php endif; ?>
+
+    </div>
+
+    <!-- Footer -->
+    <footer>
+        <div class="footer-container">
+            <div class="row">
+                <div class="column-1"><img class="logo" src="images/logo/logo.png">
+                    <div class="footer-summary">Welcome to ABCinema, a modern cinema delivering immersive experiences with top-notch visuals, sound, and cosy seating. Discover blockbusters, indie films, and local gems—all designed to captivate and inspire.
+                    </div>
+                </div>
+
+                <div class="column-2">
+                    <h2>Links</h2>
+                        <p class="footer-links"><a href="http://demo.amytheme.com/movie/demo/elementor-single-cinema/" aria-current="page">Home</a></p>
+                        <p class="footer-links"><a href="http://demo.amytheme.com/movie/demo/elementor-single-cinema/coming-soon/">Movies</a></p>
+                        <p class="footer-links"><a href="http://demo.amytheme.com/movie/demo/elementor-single-cinema/top-rated/">About us</a></p>
+                </div>
+
+                <div class="column-2">
+                    <h2>Contact Us</h2>
+                    123 Raffles Place #14-01 <br> Singapore 348023
+                    <p>support@abcinema.com.sg
+                    <p>+65 63498203
+                </div>
+
+                <div class="column-2">
+                    <h2>Follow Us</h2>
+                    <img id="footer-icons" src="images/icons/twitter-x.svg" alt="X (Twitter)" />
+                    <img id="footer-icons" src="images/icons/facebook.svg" alt="Facebook" />
+                    <img id="footer-icons" src="images/icons/instagram.svg" alt="Instagram" />
+                </div>
+            </div>
+        </div>
+        </div>
+    </footer>
+
+</html>
+
+<script>
+ 
+</script>

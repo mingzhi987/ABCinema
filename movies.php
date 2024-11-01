@@ -69,14 +69,14 @@ $genre_result = $conn->query($genre_query);
     <!-- Nav bar -->
     <div class="header">
         <a href="#default">
-            <img class=logo src="images/logo/logo.png" href="#">
+            <img class=logo src="images/logo/logo.png" href="movies.php">
         </a>
         <div class="header-left">
             <a href="#contact" alt="Contact">Contact</a>
             <a href="#about" alt="About">About us</a>
         </div>
         <div class="menu-icons">
-            <a href="#"><img src="images/icons/basket.svg" alt="Checkout" /></a>
+            <a href="checkout.html"><img src="images/icons/basket.svg" alt="Checkout" /></a>
             <a href="#"><img src="images/icons/profile.svg" alt="Profile" /></a>
         </div>
     </div>
@@ -119,7 +119,7 @@ $genre_result = $conn->query($genre_query);
             <span class="dot" onclick="currentSlide(3)"></span>
         </div>
     </div>
-</div>
+    </div>
 
     <!-- Movies -->
     <div class="movies-container">
@@ -171,27 +171,27 @@ $genre_result = $conn->query($genre_query);
             <?php endwhile; ?>
         </div>
 
-    <div class="pagination">
-    <?php
-    // Calculate total pages
-    $total_pages = ceil($total_movies / $movies_per_page);
+        <div class="pagination">
+            <?php
+            // Calculate total pages
+            $total_pages = ceil($total_movies / $movies_per_page);
 
-    for ($i = 1; $i <= $total_pages; $i++) {
-        $url_params = http_build_query([
-            'page' => $i,
-            'genre' => $selected_genre,
-            'search' => $search_query,
-        ]);
-        if ($i == $page) {
-            echo "<a class='active' href='?$url_params'>$i</a>";
-        } else {
-            echo "<a href='?$url_params'>$i</a>";
-        }
-    }
-    ?>
+            for ($i = 1; $i <= $total_pages; $i++) {
+                $url_params = http_build_query([
+                    'page' => $i,
+                    'genre' => $selected_genre,
+                    'search' => $search_query,
+                ]);
+                if ($i == $page) {
+                    echo "<a class='active' href='?$url_params'>$i</a>";
+                } else {
+                    echo "<a href='?$url_params'>$i</a>";
+                }
+            }
+            ?>
+        </div>
     </div>
     </div>
-</div>
 </body>
 
 <!-- Footer -->
