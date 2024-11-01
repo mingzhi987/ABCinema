@@ -21,25 +21,31 @@ $conn->close();
 <head>
     <meta charset="UTF-8">
     <title>Login</title>
+    <link rel="stylesheet" href="abcmovies.css">
     <link rel="stylesheet" href="all_styles.css">
 </head>
 <body>
-    <div class="header-content" style="text-align: center;">
-        <h2>Sign In / Sign Up</h2>
-
-        <!-- Insert logo here -->
-
-        <!-- Insert navbar here -->
-        <div class="navbar-header">
+    <!-- Nav bar -->
+    <div class="header">
+        <a href="movies.php">
+            <img class=logo src="images/logo/logo.png" href="#">
+        </a>
+        <div class="header-left">
+            <a href="#contact" alt="Contact">Contact</a>
+            <a href="#about" alt="About">About us</a>
         </div>
-
-        <!-- Insert sign in account here -->
+        <div class="menu-icons">
+            <a href="checkout.php"><img src="images/icons/basket.svg" alt="Checkout" /></a>
+            <?php if (isset($_SESSION['token_id'])): ?>
+                <a href="profile.php"><img src="images/icons/profile.svg" alt="Profile" /></a>
+            <?php else: ?>
+                <a href="login.php"><img src="images/icons/profile.svg" alt="Login" /></a>
+            <?php endif; ?>
+        </div>
     </div>
 
     <div class="body-content">
-        <div class="header">
-            <h1>Sign In / Sign Up</h1>
-        </div>
+        <h1 style="margin-top: 30px; margin-bottom: 30px;">Sign In / Sign Up</h1>
         <div class="sign-up-in-form">
             <h2 style="margin-top: 30px;"><u>Sign In</u></h2>
             <form id="sign_in" method="post" action="">
@@ -56,10 +62,6 @@ $conn->close();
             <p style="margin-bottom: 30px; margin-top: 20px;">Forgot your password? <a href="#" id="forget_password">Forget Password?</a></p>
         </div>
         <br/>
-    </div>
-    
-    <div class="footer-content">
-        <p>ABCinema, &copy; 2021</p>
     </div>
 
 
@@ -145,5 +147,39 @@ $conn->close();
             }
         });
     </script>
+   <!-- Footer -->
+   <footer>
+    <div class="footer-container">
+        <div class="row">
+            <div class="column-1"><img class="logo" src="images/logo/logo.png">
+                <div class="footer-summary">Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat</div>
+            </div>
+
+            <div class="column-2">
+                <h4>Links</h4>
+                <ul>
+                    <li class="footer-links"><a href="http://demo.amytheme.com/movie/demo/elementor-single-cinema/" aria-current="page">Home</a></li>
+                    <li class="footer-links"><a href="http://demo.amytheme.com/movie/demo/elementor-single-cinema/coming-soon/">Coming Soon</a></li>
+                    <li class="footer-links"><a href="http://demo.amytheme.com/movie/demo/elementor-single-cinema/top-rated/">Top rated</a></li>
+                </ul>
+            </div>
+
+            <div class="column-2">
+                <h4>Contact Us</h4>
+                123 Raffles Place #14-01 <br> Singapore 348023
+                <p>support@abcinema.com.sg
+                <p>+65 63498203
+            </div>
+
+            <div class="column-2">
+                <h4>Follow Us</h4>
+                <img src="images/icons/twitter-x.svg" alt="X (Twitter)" />
+                <img src="images/icons/facebook.svg" alt="Facebook" />
+                <img src="images/icons/instagram.svg" alt="Instagram" />
+            </div>
+        </div>
+    </div>
+    </div>
+</footer>
 </body>
 </html>

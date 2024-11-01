@@ -65,12 +65,12 @@ if (isset($_POST['gift_booking']) && isset($_POST['recipient_email']) && isset($
         // Update the booking with the new UserID
         $giftQuery = "UPDATE booking SET UserID = '$recipientUserID' WHERE BookingID = '$bookingID'";
         if ($conn->query($giftQuery) === TRUE) {
-            echo "<script>alert('Gift success');</script>";
+            echo "<script>alert('Booking gifted successfully!'); window.location.href='profile.php'</script>";
         } else {
-            echo "<script>alert('Error gifting booking');</script>";
+            echo "<script>alert('Error updating booking: " . $stmt->error . "');</script>";
         }
     } else {
-        echo "<script>alert('User does not exist, check email again.');</script>";
+        echo "<script>alert('Invalid recipient email.');</script>";
     }
 }
 ?>
@@ -123,25 +123,26 @@ if (isset($_POST['gift_booking']) && isset($_POST['recipient_email']) && isset($
 
             <button type="submit" name="update_profile">Update Profile</button>
         </form>
+        <button onclick="location.href='logout.php'">Log Out</button>
     </div>
 
     <div class="container">
-        <h1>Bookings</h1>
+        <h1>Tickets</h1>
         <table border="1">
             <tr>
                 <th>BookingID</th>
                 <th>PaymentDate</th>
-                <th>PaymentType</th>
                 <th>UserID</th>
                 <th>ShoppingCartID</th>
                 <th>MovieName</th>
                 <th>Showtime</th>
-                <th>CinemaSeat</th>
+                <th>Cinema Hall</th>
+                <th>Seat Number</th>
                 <th>Gift</th>
             </tr>
             <?php
-            // Retrieve bookings for the user
-            $bookingQuery = "SELECT * FROM booking WHERE UserID = '$userID'";
+            // Retrieve bookings / tickets for the user
+            $bookingQuery = "SELECT * FROM booking WHERE UserID = '$userid'";
             $bookingResult = $conn->query($bookingQuery);
 
             if ($bookingResult->num_rows > 0) {
@@ -149,12 +150,12 @@ if (isset($_POST['gift_booking']) && isset($_POST['recipient_email']) && isset($
                     echo "<tr>";
                     echo "<td>" . $booking['BookingID'] . "</td>";
                     echo "<td>" . $booking['PaymentDate'] . "</td>";
-                    echo "<td>" . $booking['PaymentType'] . "</td>";
                     echo "<td>" . $booking['UserID'] . "</td>";
                     echo "<td>" . $booking['ShoppingCartID'] . "</td>";
                     echo "<td>" . $booking['MovieName'] . "</td>";
                     echo "<td>" . $booking['Showtime'] . "</td>";
-                    echo "<td>" . $booking['CinemaSeat'] . "</td>";
+                    echo "<td>" . $booking['CinemaHall'] . "</td>";
+                    echo "<td>" . $booking['SeatNo'] . "</td>";
                     echo "<td>";
                     echo "<form method='POST' action='' style='display:inline-block;'>";
                     echo "<input type='hidden' name='booking_id' value='" . $booking['BookingID'] . "'>";

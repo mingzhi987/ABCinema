@@ -8,6 +8,9 @@ files that are actually pages so far:
 2) sign_up.php
 3) profile.php
 4) display_movie_info.php
+5) movies.php
+6) checkout.php
+
 
 other php pages not mentioned here are for functional usage only, that is for data manipulation / sending emails (forget password feature)
 

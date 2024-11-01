@@ -200,11 +200,37 @@ while ($row = $result->fetch_assoc()) {
 <script>
     function checkoutAlert() {
         if (confirm("Confirm checkout?")) {
+            
+            //insert bookings
+            var cartItems = <?php echo json_encode($cartItems); ?>;
 
-            //send email on booking success
-            window.location.href = "email_send_tester.php";
-
-            //AJAX call to php page to save shopping cart details and additional nonsense to "booking" table
+            var xhr = new XMLHttpRequest();
+            xhr.open("POST", "insert_bookings.php", true);
+            xhr.setRequestHeader("Content-Type", "application/json");
+            xhr.onreadystatechange = function () {
+                if (xhr.readyState === 4) {
+                    console.log("XHR Status:", xhr.status); // Debugging: Log XHR status
+                    console.log("XHR Response:", xhr.responseText); // Debugging: Log XHR response
+                    if (xhr.status === 200) {
+                        try {
+                            var response = JSON.parse(xhr.responseText);
+                            if (response.status === 'success') {
+                                // Send email on booking success
+                                window.location.href = "email_send_tester.php";
+                            } else {
+                                console.log(response.message);
+                                alert(response.message);
+                            }
+                        } catch (e) {
+                            console.error("Error parsing JSON response:", e);
+                            console.error("Response text:", xhr.responseText);
+                        }
+                    } else {
+                        alert("An error occurred while processing your request.");
+                    }
+                }
+            };
+            xhr.send(JSON.stringify(cartItems));
         }
     }
 </script>

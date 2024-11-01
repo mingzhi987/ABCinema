@@ -29,6 +29,6 @@
 
     session_unset();
     session_destroy();
-    header("Location: login.php"); // Redirect to login page
+    header("Location: movies.php"); // Redirect to login page
     exit;
 ?>
