@@ -22,14 +22,13 @@ CREATE database IF NOT EXISTS abcinema;
 
 USE abcinema;
 --
-
 -- --------------------------------------------------------
 
 --
 -- Table structure for table `booking`
 --
 
-CREATE TABLE `booking` (
+CREATE TABLE if not EXISTS `booking` (
   `BookingID` int(11) NOT NULL,
   `PaymentDate` date NOT NULL,
   `PaymentType` varchar(45) NOT NULL,
@@ -46,7 +45,7 @@ CREATE TABLE `booking` (
 -- Table structure for table `cinema`
 --
 
-CREATE TABLE `cinema` (
+CREATE TABLE if not EXISTS `cinema` (
   `CinemaID` int(11) NOT NULL,
   `MovieAllocated` int(11) NOT NULL,
   `CinemaHall` varchar(45) NOT NULL
@@ -58,24 +57,36 @@ CREATE TABLE `cinema` (
 -- Table structure for table `movies`
 --
 
-CREATE TABLE `movies` (
+CREATE TABLE if not EXISTS `movies` (
   `MovieID` int(11) NOT NULL,
   `MovieName` varchar(45) NOT NULL,
   `MovieGenre` varchar(45) NOT NULL,
   `MovieLength` int(11) NOT NULL,
   `MovieRating` int(11) NOT NULL,
-  `MovieDesc` text DEFAULT NULL
+  `MovieDesc` text DEFAULT NULL,
+  `MoviePoster` text DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci COMMENT='To store movie data';
 
 -- --------------------------------------------------------
+/* insert sample*/
+INSERT INTO movies VALUES ("1","kung fu panda 4","comedy","100","9","pandas fighting","kfp4.jpg");
+INSERT INTO movies VALUES ("2","smile","thriller","80","7","Smile","smile.jpg");
+INSERT INTO movies VALUES ("3","the avengers","sci-fi","95","8","Avengers Unite","avengers.jpg");
+INSERT INTO movies VALUES ("4","rush hour 4 ","action","104","8","Rush Hour is back again","rh4.jpg");
+INSERT INTO movies VALUES ("5","john wick 5","action","135","9","John is back in the fight again","jw5.jpg");
+INSERT INTO movies VALUES ("6","apollo 11","thriller","110","7","Based on true events","apollo11.jpg");
+INSERT INTO movies VALUES ("7","conjuring","horror","83","8","Conjuring will keep you on the edge of your seats","conjuring.jpg");
+INSERT INTO movies VALUES ("8","moo deng","documentary","63","7","How did Moo Deng gained popularity","moodeng.jpg");
+INSERT INTO movies VALUES ("9","avatar","sci-fi","121","9","Dive into a new world","avatar.jpg");
 
 --
 -- Table structure for table `screeningtime2`
 --
 
-CREATE TABLE `screeningtime2` (
+CREATE TABLE if not EXISTS `screeningtime2` (
   `ScreenTimeID` int(11) NOT NULL,
   `ScreenTimeDate` date NOT NULL,
+  `ScreenTimeTime` Time NOT NULL,
   `ScreenTimeCost` decimal(10,2) NOT NULL,
   `SeatingLocation` int(11) NOT NULL,
   `ScreeningMovie` int(11) NOT NULL,
@@ -88,7 +99,7 @@ CREATE TABLE `screeningtime2` (
 -- Table structure for table `seating`
 --
 
-CREATE TABLE `seating` (
+CREATE TABLE if not EXISTS `seating` (
   `SeatID` int(11) NOT NULL,
   `CinemaNumber` int(11) NOT NULL,
   `BookingState` int(11) NOT NULL DEFAULT 0
@@ -100,7 +111,7 @@ CREATE TABLE `seating` (
 -- Table structure for table `shoppingcart`
 --
 
-CREATE TABLE `shoppingcart` (
+CREATE TABLE if not EXISTS `shoppingcart` (
   `ShoppingCartID` int(11) NOT NULL,
   `TotalPrice` decimal(10,2) NOT NULL,
   `UserID` int(11) NOT NULL
@@ -112,7 +123,7 @@ CREATE TABLE `shoppingcart` (
 -- Table structure for table `useraccount`
 --
 
-CREATE TABLE `useraccount` (
+CREATE TABLE if not EXISTS `useraccount` (
   `UserID` int(11) NOT NULL,
   `Username` varchar(45) NOT NULL,
   `Email` varchar(100) NOT NULL,
@@ -262,3 +273,4 @@ COMMIT;
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
 /*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
+

@@ -25,7 +25,7 @@ $offset = ($page - 1) * $movies_per_page;
 
 // Capture filter and search inputs
 $selected_genre = isset($_GET['genre']) ? $_GET['genre'] : 'All';
-$search_query = isset($_GET['search']) ? trim($_GET['search']) : '';
+$search_query = isset($_GET['search']) ? strtolower(trim($_GET['search'])) : '';
 
 // Generate SQL condition for genre and search
 $where_conditions = [];
@@ -44,7 +44,7 @@ $total_row = $total_result->fetch_assoc();
 $total_movies = $total_row['total'];
 
 // Fetch movies data with filters and pagination
-$query = "SELECT MovieID, MovieName, MovieGenre, MovieLength, MovieRating, MovieDesc 
+$query = "SELECT MovieID, MovieName, MovieGenre, MovieLength, MovieRating, MovieDesc, MoviePoster 
           FROM movies
           ORDER BY MovieID ASC 
           LIMIT $movies_per_page OFFSET $offset";
@@ -90,7 +90,7 @@ $genre_result = $conn->query($genre_query);
             <!-- Full-width images with number and caption text -->
             <div class="mySlides fade">
                 <div class="numbertext">1 / 3</div>
-                <img src="images/logo/logo.png">
+                <img src="images/movie_poster/horizontal/img1.jpg">
                 <div class="text">Jumanji</div>
             </div>
 
@@ -119,12 +119,14 @@ $genre_result = $conn->query($genre_query);
             <span class="dot" onclick="currentSlide(3)"></span>
         </div>
     </div>
+</div>
 
     <!-- Movies -->
     <div class="movies-container">
         <div class="movies-row">
             <hr class="dotted" />
             <h1 class="movies-heading"> Now Showing </h1>
+            <?php echo $total_movies ?>
             <hr class="dotted" />
             <!-- Filter and Search Form -->
             <div class="filter-container">
@@ -135,7 +137,7 @@ $genre_result = $conn->query($genre_query);
                         <?php while ($genre_row = $genre_result->fetch_assoc()): ?>
                             <option value="<?php echo htmlspecialchars($genre_row['MovieGenre']); ?>"
                                 <?php echo $selected_genre === $genre_row['MovieGenre'] ? 'selected' : ''; ?>>
-                                <?php echo htmlspecialchars($genre_row['MovieGenre']); ?>
+                                <?php echo ucwords(htmlspecialchars($genre_row['MovieGenre']), '\',.- '); ?>
                             </option>
                         <?php endwhile; ?>
                     </select>
@@ -155,20 +157,19 @@ $genre_result = $conn->query($genre_query);
                 <div class="movies-column">
                     <a class="movies">
                         <div class="movies-card">
-                            <img id="poster" src="images/movie_poster/vertical/img1.jpg" alt="">
+                            <img id="poster" src="images/movie_poster/vertical/<?php echo htmlspecialchars($row['MoviePoster']); ?>" alt="<?php echo ucwords(htmlspecialchars($row['MovieName']), '\',.- '); ?>">
                             <ul class="movie-details">
-                                <h2><?php echo htmlspecialchars($row['MovieName']); ?></h2>
-                                <p><strong>Genre:</strong> <?php echo htmlspecialchars($row['MovieGenre']); ?></p>
+                                <h2><?php echo ucwords(htmlspecialchars($row['MovieName']), '\',.- '); ?></h2>
+                                <p><strong>Genre:</strong> <?php echo ucwords(htmlspecialchars($row['MovieGenre']), '\',.- '); ?></p>
                                 <p><strong>Length:</strong> <?php echo htmlspecialchars($row['MovieLength']); ?> mins</p>
                                 <p><strong>Rating:</strong> <?php echo htmlspecialchars($row['MovieRating']); ?>/10</p>
                                 <p><strong>Description:</strong> <?php echo htmlspecialchars($row['MovieDesc']); ?></p>
-                                <!-- movie poster -->
                                 <!-- Tooltip for showing screening times -->
                                 <div class="tooltip"></div>
                         </div>
                 </div>
             <?php endwhile; ?>
-            </div>
+        </div>
 
     <div class="pagination">
     <?php
@@ -190,6 +191,7 @@ $genre_result = $conn->query($genre_query);
     ?>
     </div>
     </div>
+</div>
 </body>
 
 <!-- Footer -->
