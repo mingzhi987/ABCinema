@@ -1,6 +1,13 @@
+@font-face {
+    font-family: 'Futura';
+    src: url('./fonts/FuturaCyrillicBook.woff') format('woff');
+    font-weight: normal;
+    font-style: normal;
+  }
+
+
 * {
-    font-family: Arial;
-    margin: 5px;
+    font-family: Futura;
     padding: 0;
     box-sizing: border-box;
 }
@@ -9,6 +16,12 @@ html, body{
     height: 100%;
     display: flex;
     flex-direction: column;
+}
+.header {
+    overflow: visible;
+    background-color: #dbdbdb;
+    padding: 10px 10px;
+    margin: 0px;
 }
 
 .header-content{
@@ -24,6 +37,7 @@ html, body{
     width: 50%;
     margin: 0 auto;
     flex-grow: 1;
+    margin-bottom: 2%;
 }
 .body-content .header{
     margin-bottom: 15px;

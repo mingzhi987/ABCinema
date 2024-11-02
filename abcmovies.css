@@ -1,7 +1,27 @@
+@font-face {
+  font-family: 'Futura';
+  src: url('./fonts/FuturaCyrillicBook.woff') format('woff');
+  font-weight: normal;
+  font-style: normal;
+}
+
+* {
+  font-family: Futura;
+  padding: 0;
+}
+
+
 /* General */
 html, body {
     margin: 0px;
     padding: 0px;
+    height: 100%;
+}
+
+.content-wrapper {
+  min-height: 100%;
+  display: flex;
+  flex-direction: column;
 }
 
 /* Add some basic styling */
@@ -73,7 +93,7 @@ hr.dotted {
 /* Style the header with a grey background and some padding */
 .header {
     overflow: hidden;
-    background-color: grey;
+    background-color: #dbdbdb;
     padding: 10px 10px;
     margin: 0px;
 }
@@ -86,7 +106,7 @@ hr.dotted {
     padding: 12px;
     text-decoration: none;
     font-size: 18px;
-    line-height: 25px;
+    /* line-height: 25px; */
     border-radius: 4px;
   }
   
@@ -112,7 +132,7 @@ hr.dotted {
   .header-left {
     float: left;
     align-items: center;
-    width:50%;
+    width:350px;
     padding: 20px 20px 0px 20px;
   }
 
@@ -351,8 +371,12 @@ hr.dotted {
 
 /* footer */
 
+footer{
+  margin-top: auto;
+}
+
 .footer-container{
-    background-color: #717171;
+    background-color: #dbdbdb;
     margin: 0px;
     padding: 10px;
 }

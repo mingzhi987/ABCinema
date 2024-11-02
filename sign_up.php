@@ -93,7 +93,7 @@
 </head>
 <body>
     <!-- Nav bar -->
-    <div class="header">
+    <div class="header" style="height: 12.7%;">
         <a href="movies.php">
             <img class=logo src="images/logo/logo.png" href="#">
         </a>
@@ -111,7 +111,7 @@
         </div>
     </div>
     <div class="body-content">
-    <h1 style = "margin-top: 30px; margin-bottom: 30px;">Sign Up</h1>
+    <h1 style = "margin-top: 30px; margin-bottom: 30px; text-transform: uppercase;">Sign Up</h1>
         <div class="sign-up-in-form">
             <h2 style="margin-top: 30px; text-decoration: underline;">Sign Up</h2>
             <form id="sign_in" method="post" action="">
@@ -136,7 +136,6 @@
             <p style="margin-bottom: 30px;">Already have an account? <a href="login.php">Back to log in</a></p>
         </div>
     </div>
-    <br/>
     <footer>
     <div class="footer-container">
         <div class="row">

@@ -45,7 +45,7 @@ $conn->close();
     </div>
 
     <div class="body-content">
-        <h1 style="margin-top: 30px; margin-bottom: 30px;">Sign In / Sign Up</h1>
+        <h1 style="margin-top: 30px; margin-bottom: 30px; text-transform: uppercase;">Sign In</h1>
         <div class="sign-up-in-form">
             <h2 style="margin-top: 30px;"><u>Sign In</u></h2>
             <form id="sign_in" method="post" action="">

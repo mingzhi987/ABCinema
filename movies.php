@@ -6,12 +6,12 @@ require 'dbconnection.php';
 // Movies table: MovieID int(11), MovieName varchar(45), MovieGenre varchar(45), MovieLength int(11), MovieRating varchar(45), MovieDesc text
 
 // Create a connection to the MySQL database
-$conn = new mysqli($servername, $username, $password, $database);
+// $conn = new mysqli($servername, $username, $password, $database);
 
-// Check if the connection was successful
-if ($conn->connect_error) {
-    die("Connection failed: " . $conn->connect_error);
-}
+// // Check if the connection was successful
+// if ($conn->connect_error) {
+//     die("Connection failed: " . $conn->connect_error);
+// }
 
 // Check if this is an AJAX request
 if (isset($_GET['ajax']) && $_GET['ajax'] === '1') {
@@ -109,143 +109,143 @@ if ($genresResult->num_rows > 0) {
     </div>
 
     <!-- Top container -->
-    <div class="top-promotion">
-
-        <!-- Slideshow container -->
-        <div class="slideshow-container">
-
-            <!-- Full-width images with number and caption text -->
-            <div class="mySlides fade">
-                <div class="numbertext">1 / 3</div>
-                <img src="images/movie_poster/horizontal/img1.jpg">
-                <div class="text">Jumanji</div>
+    <div class="content-wrapper">
+        <div class="top-promotion">
+    
+            <!-- Slideshow container -->
+            <div class="slideshow-container">
+    
+                <!-- Full-width images with number and caption text -->
+                <div class="mySlides fade">
+                    <div class="numbertext">1 / 3</div>
+                    <img src="images/movie_poster/horizontal/img1.jpg">
+                    <div class="text">Jumanji</div>
+                </div>
+    
+                <div class="mySlides fade">
+                    <div class="numbertext">2 / 3</div>
+                    <img src="images/movie_poster/horizontal/img2.jpg">
+                    <div class="text">Smile 2</div>
+                </div>
+    
+                <div class="mySlides fade">
+                    <div class="numbertext">3 / 3</div>
+                    <img src="images/movie_poster/horizontal/img3.jpg">
+                    <div class="text">Star Wars</div>
+                </div>
+    
+                <!-- Next and previous buttons -->
+                <a class="prev" onclick="plusSlides(-1)">&#10094;</a>
+                <a class="next" onclick="plusSlides(1)">&#10095;</a>
             </div>
-
-            <div class="mySlides fade">
-                <div class="numbertext">2 / 3</div>
-                <img src="images/movie_poster/horizontal/img2.jpg">
-                <div class="text">Smile 2</div>
+            <br>
+    
+            <!-- The dots/circles -->
+            <div style="text-align:center">
+                <span class="dot" onclick="currentSlide(1)"></span>
+                <span class="dot" onclick="currentSlide(2)"></span>
+                <span class="dot" onclick="currentSlide(3)"></span>
             </div>
-
-            <div class="mySlides fade">
-                <div class="numbertext">3 / 3</div>
-                <img src="images/movie_poster/horizontal/img3.jpg">
-                <div class="text">Star Wars</div>
-            </div>
-
-            <!-- Next and previous buttons -->
-            <a class="prev" onclick="plusSlides(-1)">&#10094;</a>
-            <a class="next" onclick="plusSlides(1)">&#10095;</a>
         </div>
-        <br>
-
-        <!-- The dots/circles -->
-        <div style="text-align:center">
-            <span class="dot" onclick="currentSlide(1)"></span>
-            <span class="dot" onclick="currentSlide(2)"></span>
-            <span class="dot" onclick="currentSlide(3)"></span>
+    
+        <!-- Movies -->
+        <div class="movies-container">
+            <div class="movies-row">
+                <hr class="dotted" />
+                <h1 class="movies-heading"> NOW SHOWING </h1>
+                <hr class="dotted" />
+                <div class="filters">
+            <select id="genreFilter" onchange="loadMovies()">
+                <option value="all">All Genres</option>
+                <?php foreach ($genres as $genre): ?>
+                    <option value="<?php echo ucwords(htmlspecialchars($genre)," "); ?>"><?php echo ucwords(htmlspecialchars($genre),"- "); ?></option>
+                <?php endforeach; ?>
+            </select>
+            <input type="text" id="searchInput" placeholder="Search by Movie Name">
+            <button onclick="applySearch()">Search</button>
         </div>
-    </div>
-</div>
-
-    <!-- Movies -->
-    <div class="movies-container">
-        <div class="movies-row">
-            <hr class="dotted" />
-            <h1 class="movies-heading"> NOW SHOWING </h1>
-            <hr class="dotted" />
-            <div class="filters">
-        <select id="genreFilter" onchange="loadMovies()">
-            <option value="all">All Genres</option>
-            <?php foreach ($genres as $genre): ?>
-                <option value="<?php echo ucwords(htmlspecialchars($genre)," "); ?>"><?php echo ucwords(htmlspecialchars($genre),"- "); ?></option>
-            <?php endforeach; ?>
-        </select>
-        <input type="text" id="searchInput" placeholder="Search by Movie Name">
-        <button onclick="applySearch()">Search</button>
-    </div>
-
-    <div id="movieList"></div>
-
-    <div id="pagination"></div>
-
-    <script>
-        // Load initial movie list
-        document.addEventListener("DOMContentLoaded", function() {
-            loadMovies();
-        });
-
-        // Function to load movies with AJAX
-        function loadMovies(page = 1) {
-            const genre = document.getElementById("genreFilter").value;
-            const search = document.getElementById("searchInput").value.trim().toLowerCase();
-            
-            const xhr = new XMLHttpRequest();
-            xhr.open("GET", `movies.php?ajax=1&page=${page}&genre=${genre}&search=${encodeURIComponent(search)}`, true);
-            xhr.onload = function() {
-                if (xhr.status === 200) {
-                    const data = JSON.parse(xhr.responseText);
-                    displayMovies(data.movies);
-                    displayPagination(page, data.totalMovies);
-                }
-            };
-            xhr.send();
-        }
-
-        // Function to display movies in the movieList div
-        function displayMovies(movies) {
-            const movieList = document.getElementById("movieList");
-            movieList.innerHTML = "";
-            
-            if (movies.length > 0) {
-                movies.forEach(movie => {
-                    movieList.innerHTML += `
-                    <div class="movies-column">
-                    <div class="movies">
-                        <div class="movies-card">
-                            <h2>${movie.MovieName.charAt(0).toUpperCase()+ movie.MovieName.slice(1)}</h2>
-                            <img width="100" height="150" id="poster" src="images/movie_poster/vertical/`+ movie.MoviePoster+` " alt="`+movie.MovieName+`">
-                            <p><strong>Genre:</strong> ${movie.MovieGenre.charAt(0).toUpperCase()+ movie.MovieGenre.slice(1)}</p>
-                            <p><strong>Length:</strong> ${movie.MovieLength} mins</p>
-                            <p><strong>Rating:</strong> ${movie.MovieRating}/10</p>
-                            <a href="display_movie_info.php?movieID= ${movie.MovieID}); ?>">Book Movie</a>
-                        </div>
-                        </div>
-                    </div>
-                    `;
-                });
-            } else {
-                movieList.innerHTML = "<p>No movies found.</p>";
+    
+        <div id="movieList"></div>
+    
+        <div id="pagination"></div>
+    
+        <script>
+            // Load initial movie list
+            document.addEventListener("DOMContentLoaded", function() {
+                loadMovies();
+            });
+    
+            // Function to load movies with AJAX
+            function loadMovies(page = 1) {
+                const genre = document.getElementById("genreFilter").value;
+                const search = document.getElementById("searchInput").value.trim().toLowerCase();
+                
+                const xhr = new XMLHttpRequest();
+                xhr.open("GET", `movies.php?ajax=1&page=${page}&genre=${genre}&search=${encodeURIComponent(search)}`, true);
+                xhr.onload = function() {
+                    if (xhr.status === 200) {
+                        const data = JSON.parse(xhr.responseText);
+                        displayMovies(data.movies);
+                        displayPagination(page, data.totalMovies);
+                    }
+                };
+                xhr.send();
             }
-        }
-
-        // Function to display pagination
-        function displayPagination(currentPage, totalMovies) {
-            const pagination = document.getElementById("pagination");
-            pagination.innerHTML = "";
-
-            const totalPages = Math.ceil(totalMovies / 10);
-            if (totalPages > 1) {
-                for (let i = 1; i <= totalPages; i++) {
-                    pagination.innerHTML += `
-                        <button onclick="loadMovies(${i})" ${i === currentPage ? 'style="font-weight:bold;"' : ''}>
-                            ${i}
-                        </button>
-                    `;
+    
+            // Function to display movies in the movieList div
+            function displayMovies(movies) {
+                const movieList = document.getElementById("movieList");
+                movieList.innerHTML = "";
+                
+                if (movies.length > 0) {
+                    movies.forEach(movie => {
+                        movieList.innerHTML += `
+                        <div class="movies-column">
+                        <div class="movies">
+                            <div class="movies-card">
+                                <h2>${movie.MovieName.charAt(0).toUpperCase()+ movie.MovieName.slice(1)}</h2>
+                                <img width="100" height="150" id="poster" src="images/movie_poster/vertical/`+ movie.MoviePoster+` " alt="`+movie.MovieName+`">
+                                <p><strong>Genre:</strong> ${movie.MovieGenre.charAt(0).toUpperCase()+ movie.MovieGenre.slice(1)}</p>
+                                <p><strong>Length:</strong> ${movie.MovieLength} mins</p>
+                                <p><strong>Rating:</strong> ${movie.MovieRating}/10</p>
+                                <a href="display_movie_info.php?movieID= ${movie.MovieID}); ?>">Book Movie</a>
+                            </div>
+                            </div>
+                        </div>
+                        `;
+                    });
+                } else {
+                    movieList.innerHTML = "<p>No movies found.</p>";
                 }
             }
-        }
-
-        // Function to apply search
-        function applySearch() {
-            loadMovies();
-        }
-    </script>
+    
+            // Function to display pagination
+            function displayPagination(currentPage, totalMovies) {
+                const pagination = document.getElementById("pagination");
+                pagination.innerHTML = "";
+    
+                const totalPages = Math.ceil(totalMovies / 10);
+                if (totalPages > 1) {
+                    for (let i = 1; i <= totalPages; i++) {
+                        pagination.innerHTML += `
+                            <button onclick="loadMovies(${i})" ${i === currentPage ? 'style="font-weight:bold;"' : ''}>
+                                ${i}
+                            </button>
+                        `;
+                    }
+                }
+            }
+    
+            // Function to apply search
+            function applySearch() {
+                loadMovies();
+            }
+        </script>
+        </div>
+        </div>
     </div>
-    </div>
-</body>
 
-<!-- Footer -->
+    <!-- Footer -->
 <footer>
     <div class="footer-container">
         <div class="row">
@@ -279,6 +279,9 @@ if ($genresResult->num_rows > 0) {
     </div>
     </div>
 </footer>
+
+</body>
+
 
 </html>
 
