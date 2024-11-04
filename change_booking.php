@@ -27,7 +27,20 @@ if ($result->num_rows > 0) {
 // Retrieve booking details
 if (isset($_POST['booking_id'])) {
     $bookingID = intval($_POST['booking_id']);
-    $sql = "SELECT * FROM booking WHERE BookingID = ? AND UserID = ?";
+    $sql = "
+        SELECT 
+            b.BookingID, b.PaymentDate, b.MovieName, b.Showtime, b.Price, 
+            st.ScreenTimeDate, c.CinemaHall, s.SeatNumber 
+        FROM 
+            booking AS b
+        JOIN 
+            screeningtime2 AS st ON b.Showtime = st.ScreenTimeID
+        JOIN 
+            cinema AS c ON b.CinemaID = c.CinemaID
+        JOIN 
+            seating AS s ON b.SeatID = s.SeatID
+        WHERE 
+            b.BookingID = ? AND b.UserID = ?";
     $stmt = $conn->prepare($sql);
     $stmt->bind_param("ii", $bookingID, $userid);
     $stmt->execute();
@@ -57,7 +70,7 @@ if (isset($_POST['new_showtime'])) {
     $new_showtime = intval($_POST['new_showtime']);
     $sql = "SELECT SeatID, SeatNumber FROM seating 
             WHERE CinemaNumber IN (SELECT CinemaID FROM cinema WHERE MovieAllocated = (SELECT MovieID FROM movies WHERE MovieName = ?)) 
-            AND SeatID NOT IN (SELECT SeatID FROM booking WHERE ScreenTimeID = ?)";
+            AND SeatID NOT IN (SELECT SeatID FROM booking WHERE Showtime = ?)";
     $stmt = $conn->prepare($sql);
     $stmt->bind_param("si", $booking['MovieName'], $new_showtime);
     $stmt->execute();
@@ -85,9 +98,9 @@ $conn->close();
     </div>
     <div class="body-content">
         <h2>Current Booking Details</h2>
-        <p><strong>Showtime:</strong> <?php echo htmlspecialchars($booking['Showtime']); ?></p>
+        <p><strong>Showtime:</strong> <?php echo htmlspecialchars($booking['ScreenTimeDate']); ?></p>
         <p><strong>Cinema Hall:</strong> <?php echo htmlspecialchars($booking['CinemaHall']); ?></p>
-        <p><strong>Seat Number:</strong> <?php echo htmlspecialchars($booking['SeatNo']); ?></p>
+        <p><strong>Seat Number:</strong> <?php echo htmlspecialchars($booking['SeatNumber']); ?></p>
 
         <h2>Modify Booking</h2>
         <form method="post" action="">

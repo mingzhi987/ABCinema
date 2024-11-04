@@ -51,12 +51,12 @@ if ($result->num_rows > 0) {
 // Query to get movie screening details and seats in the shopping cart
 $sql = "
     SELECT 
-        st.ScreenTimeID, st.ScreenTimeDate, st.ScreenTimeCost, c.CinemaID c.CinemaHall, m.MovieName, s.SeatID, s.SeatNumber
+        st.ScreenTimeID, st.ScreenTimeDate, st.ScreenTimeCost, c.CinemaID, c.CinemaHall, m.MovieName, s.SeatID, s.SeatNumber
     FROM 
         shoppingscreening AS ss
     JOIN 
         screeningtime2 AS st ON ss.ScreenTimeID = st.ScreenTimeID
-    JOIN q
+    JOIN
         cinema AS c ON st.SeatingLocation = c.CinemaID
     JOIN 
         movies AS m ON st.ScreeningMovie = m.MovieID

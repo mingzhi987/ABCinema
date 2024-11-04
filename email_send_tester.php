@@ -8,6 +8,9 @@ if (!isset($_SESSION['token_id'])) {
     exit; // Redirect to login if not logged in
 }
 
+
+echo "you're in email_send_tester.php";
+
 // Create a connection to the MySQL database
 $conn = new mysqli($servername, $username, $password, $database);
 
@@ -34,88 +37,85 @@ if ($result->num_rows > 0) {
     exit;
 }
 
-// Retrieve the shopping cart linked to the user
-$sql = "SELECT ShoppingCartID FROM shoppingcart WHERE UserID = ?";
-$stmt = $conn->prepare($sql);
-$stmt->bind_param("i", $userid);
-$stmt->execute();
-$result = $stmt->get_result();
-
-if ($result->num_rows > 0) {
-    $shoppingCart = $result->fetch_assoc();
-    $shoppingCartID = $shoppingCart['ShoppingCartID'];
-} else {
-    echo "No items in the shopping cart.";
-    exit;
-}
+// Retrieve the new booking IDs from the session
+$newBookingIDs = $_SESSION['newBookingIDs'];
+$placeholders = implode(',', array_fill(0, count($newBookingIDs), '?'));
 
 // Query to get movie screening details and seats in the shopping cart
 $sql = "
     SELECT 
-        st.ScreenTimeID, st.ScreenTimeDate, st.ScreenTimeCost, c.CinemaHall, m.MovieName, s.SeatNumber
+        b.BookingID, b.PaymentDate, b.MovieName, b.Showtime, b.Price, 
+        c.CinemaHall, s.SeatNumber 
     FROM 
-        shoppingscreening AS ss
+        booking AS b
     JOIN 
-        screeningtime2 AS st ON ss.ScreenTimeID = st.ScreenTimeID
+        cinema AS c ON b.CinemaID = c.CinemaID
     JOIN 
-        cinema AS c ON st.SeatingLocation = c.CinemaID
-    JOIN 
-        movies AS m ON st.ScreeningMovie = m.MovieID
-    JOIN 
-        seating AS s ON ss.SeatID = s.SeatID
+        seating AS s ON b.SeatID = s.SeatID
     WHERE 
-        ss.ShoppingCartID = ?";
+        b.BookingID IN ($placeholders)
+    ORDER BY 
+        b.PaymentDate DESC";
 $stmt = $conn->prepare($sql);
-$stmt->bind_param("i", $shoppingCartID);
+$stmt->bind_param(str_repeat('i', count($newBookingIDs)), ...$newBookingIDs);
 $stmt->execute();
 $result = $stmt->get_result();
 
-$cartItems = [];
+$bookings = [];
 while ($row = $result->fetch_assoc()) {
-    $cartItems[] = $row;
+    $bookings[] = $row;
 }
 
 $stmt->close();
 $conn->close();
 
-//TODO: molest here
 // Construct the email body
-$emailBody = "Hello $user_fullName! Thank you for purchasing tickets from our website, please check them out under your profile page!\n\nDetails are as follows:\n\n";
-
-// Initialize the HTML table for the email body
-$emailBody = "<table border='1'>";
-$emailBody .= "<tr>
-    <th>ScreenTimeID</th>
-    <th>Movie</th>
-    <th>Date</th>
-    <th>Cost</th>
-    <th>Cinema Hall</th>
-    <th>Seat Number</th>
-</tr>";
+$emailBody = "
+<html>
+<head>
+    <title>Booking Confirmation</title>
+</head>
+<body>
+    <h2>Hello $user_fullName!</h2>
+    <p>You have successfully purchased tickets from our website. Please check them out under your profile page!</p>
+    <h3>Details are as follows:</h3>
+    <table border='1'>
+        <tr>
+            <th>BookingID</th>
+            <th>Payment Date</th>
+            <th>Movie</th>
+            <th>Showtime</th>
+            <th>Price</th>
+            <th>Cinema Hall</th>
+            <th>Seat Number</th>
+        </tr>";
 
 // Loop through cart items to populate table rows
-foreach ($cartItems as $item) {
+foreach ($bookings as $booking) {
     $emailBody .= "<tr>";
-    $emailBody .= "<td>" . htmlspecialchars($item['ScreenTimeID']) . "</td>";
-    $emailBody .= "<td>" . htmlspecialchars($item['MovieName']) . "</td>";
-    $emailBody .= "<td>" . htmlspecialchars($item['ScreenTimeDate']) . "</td>";
-    $emailBody .= "<td>$" . htmlspecialchars($item['ScreenTimeCost']) . "</td>";
-    $emailBody .= "<td>" . htmlspecialchars($item['CinemaHall']) . "</td>";
-    $emailBody .= "<td>" . htmlspecialchars($item['SeatNumber']) . "</td>";
+    $emailBody .= "<td>" . htmlspecialchars($booking['BookingID']) . "</td>";
+    $emailBody .= "<td>" . htmlspecialchars($booking['PaymentDate']) . "</td>";
+    $emailBody .= "<td>" . htmlspecialchars($booking['MovieName']) . "</td>";
+    $emailBody .= "<td>" . htmlspecialchars($booking['Showtime']) . "</td>";
+    $emailBody .= "<td>$" . htmlspecialchars($booking['Price']) . "</td>";
+    $emailBody .= "<td>" . htmlspecialchars($booking['CinemaHall']) . "</td>";
+    $emailBody .= "<td>" . htmlspecialchars($booking['SeatNumber']) . "</td>";
     $emailBody .= "</tr>";
 }
 
 // Close the HTML table
 $emailBody .= "</table>";
 
-$emailBody .= "<br><img src='images/logo/logo.png' alt='Movie Image' width='200' height='150'>";
+$emailBody .= "<br><img src='images/logo/logo.png' alt='Movie Image' width='200' height='150'>
+</body>
+</html>";
 
 // Email settings
 $to = 'email2@localhost';
 $subject = 'Booking tickets successful!';
-$headers = "From: ABC Cinemas <email1@localhost>\r\n";
+$headers = "From: ABCinemas <email1@localhost>\r\n";
 $headers .= "Reply-To: email1@localhost\r\n";
-$headers .= "Content-Type: text/plain; charset=UTF-8\r\n";
+$headers .= "Content-Type: text/html; charset=UTF-8\r\n";
 
 // Send the email
 if (mail($to, $subject, $emailBody, $headers)) {

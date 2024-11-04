@@ -8,6 +8,8 @@ if (!isset($_SESSION['token_id'])) {
     exit;
 }
 
+echo "<script>console.log('you're in insert_bookings.php')</script>";
+
 // Create a connection to the MySQL database
 $conn = new mysqli($servername, $username, $password, $database);
 
@@ -52,7 +54,8 @@ if (empty($cartItems)) {
 }
 
 
-$newbookingsInserted = false;
+$newBookingsInserted = false;
+$newBookingIDs = [];
 
 // Insert each cart item into the bookings table
 foreach ($cartItems as $item) {
@@ -77,18 +80,28 @@ foreach ($cartItems as $item) {
         echo "<script>alert('Error inserting booking: " . $stmt->error . "'); window.location.href='checkout.php';</script>";
         exit;
     }
-    $newbookingsInserted = true;
+    $newBookingsInserted = true;
+    $newBookingIDs[] = $conn->insert_id; // Store the new booking ID
 }
 
-$stmt->close();
-$conn->close();
-
 if ($newBookingsInserted) {
-    echo json_encode(['status' => 'success', 'message' => 'Bookings inserted successfully.']);
-    header("Location: email_send_tester.php");
+    $sql = "DELETE FROM shoppingcart WHERE ShoppingCartID = ?";
+    $stmt = $conn->prepare($sql);
+    $stmt->bind_param("i", $shoppingCartID);
+    if (!$stmt->execute()) {
+        echo "<script>alert('Error deleting shopping cart: " . $stmt->error . "'); window.location.href='checkout.php';</script>";
+        exit;
+    }
+
+    // Redirect to email_send_tester.php with the new booking IDs
+    $_SESSION['newBookingIDs'] = $newBookingIDs;
+     echo "<script>alert('Bookings inserted successfully.'); window.location.href='email_send_tester.php';</script>";
     exit;
 } else {
     echo "<script>alert('No new bookings were inserted due to duplicates.'); window.location.href='checkout.php';</script>";
 }
+
+$stmt->close();
+$conn->close();
 
 ?>

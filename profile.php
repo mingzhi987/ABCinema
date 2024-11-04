@@ -50,34 +50,34 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['update_profile'])) {
 }
 
 // Handle modify booking
-if (isset($_POST['modify_booking']) && isset($_POST['booking_id']) && isset($_POST['new_showtime']) && isset($_POST['new_seat'])) {
-    $bookingID = intval($_POST['booking_id']);
-    $newShowtime = $_POST['new_showtime'];
-    $newSeat = intval($_POST['new_seat']);
+// if (isset($_POST['modify_booking']) && isset($_POST['booking_id']) && isset($_POST['new_showtime']) && isset($_POST['new_seat'])) {
+//     $bookingID = intval($_POST['booking_id']);
+//     $newShowtime = $_POST['new_showtime'];
+//     $newSeat = intval($_POST['new_seat']);
 
-    // Check if the new showtime and seat are available
-    $sql = "SELECT * FROM booking WHERE Showtime = ? AND SeatNo = ?";
-    $stmt = $conn->prepare($sql);
-    $stmt->bind_param("si", $newShowtime, $newSeat);
-    $stmt->execute();
-    $result = $stmt->get_result();
+//     // Check if the new showtime and seat are available
+//     $sql = "SELECT * FROM booking WHERE Showtime = ? AND SeatNo = ?";
+//     $stmt = $conn->prepare($sql);
+//     $stmt->bind_param("si", $newShowtime, $newSeat);
+//     $stmt->execute();
+//     $result = $stmt->get_result();
 
-    if ($result->num_rows > 0) {
-        echo "<script>alert('The selected showtime and seat are already taken.'); window.location.href='profile.php'</script>";
-    } else {
-        // Update the booking with the new showtime and seat
-        $sql = "UPDATE booking SET Showtime = ?, SeatNo = ? WHERE BookingID = ? AND UserID = ?";
-        $stmt = $conn->prepare($sql);
-        $stmt->bind_param("siii", $newShowtime, $newSeat, $bookingID, $userid);
-        if ($stmt->execute()) {
-            echo "<script>alert('Booking modified successfully!'); window.location.href='profile.php'</script>";
-        } else {
-            echo "<script>alert('Error modifying booking: " . $stmt->error . "');</script>";
-        }
-    }
+//     if ($result->num_rows > 0) {
+//         echo "<script>alert('The selected showtime and seat are already taken.'); window.location.href='profile.php'</script>";
+//     } else {
+//         // Update the booking with the new showtime and seat
+//         $sql = "UPDATE booking SET Showtime = ?, SeatID = ? WHERE BookingID = ? AND UserID = ?";
+//         $stmt = $conn->prepare($sql);
+//         $stmt->bind_param("siii", $newShowtime, $newSeat, $bookingID, $userid);
+//         if ($stmt->execute()) {
+//             echo "<script>alert('Booking modified successfully!'); window.location.href='profile.php'</script>";
+//         } else {
+//             echo "<script>alert('Error modifying booking: " . $stmt->error . "');</script>";
+//         }
+//     }
 
-    $stmt->close();
-}
+//     $stmt->close();
+// }
 
 // Handle refund booking
 if (isset($_POST['refund_booking']) && isset($_POST['booking_id'])) {
@@ -191,8 +191,24 @@ if (isset($_POST['gift_booking']) && isset($_POST['recipient_email']) && isset($
             </tr>
             <?php
             // Retrieve bookings / tickets for the user
-            $bookingQuery = "SELECT * FROM booking WHERE UserID = '$userid'";
-            $bookingResult = $conn->query($bookingQuery);
+            $bookingQuery = "
+            SELECT 
+                b.BookingID, b.PaymentDate, b.UserID, b.ShoppingCartID, b.MovieName, 
+                st.ScreenTimeDate AS Showtime, c.CinemaHall, s.SeatNumber 
+            FROM 
+                booking AS b
+            JOIN 
+                screeningtime2 AS st ON b.Showtime = st.ScreenTimeID
+            JOIN 
+                cinema AS c ON b.CinemaID = c.CinemaID
+            JOIN 
+                seating AS s ON b.SeatID = s.SeatID
+            WHERE 
+                b.UserID = ?";
+            $stmt = $conn->prepare($bookingQuery);
+            $stmt->bind_param("i", $userid);
+            $stmt->execute();
+            $bookingResult = $stmt->get_result();
 
             if ($bookingResult->num_rows > 0) {
                 while ($booking = $bookingResult->fetch_assoc()) {
@@ -210,7 +226,7 @@ if (isset($_POST['gift_booking']) && isset($_POST['recipient_email']) && isset($
                     echo "<td>" . $booking['MovieName'] . "</td>";
                     echo "<td>" . $booking['Showtime'] . "</td>";
                     echo "<td>" . $booking['CinemaHall'] . "</td>";
-                    echo "<td>" . $booking['SeatNo'] . "</td>";
+                    echo "<td>" . $booking['SeatNumber'] . "</td>";
                     echo "<td>";
                     echo "<form method='POST' action='' style='display:inline-block;'>";
                     echo "<input type='hidden' name='booking_id' value='" . $booking['BookingID'] . "'>";
