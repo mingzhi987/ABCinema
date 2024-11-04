@@ -1,8 +1,7 @@
 <?php
-require 'vendor/autoload.php';
+
 require 'dbconnection.php';
-use PHPMailer\PHPMailer\PHPMailer;
-use PHPMailer\PHPMailer\Exception;
+
 
 // send_email.php
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
@@ -46,33 +45,22 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         </body>
         </html>";
 
-        // Send email using PHPMailer
-        $mail = new PHPMailer(true);
-        try {
-            // Server settings
-            $mail->isSMTP();
-            $mail->Host = 'smtp.gmail.com';
-            $mail->SMTPAuth = true;
-            $mail->Username = 'adamcheehean01@gmail.com'; // Your Gmail address
-            $mail->Password = 'lqot wuvq xiuq xwbi'; // App password from Google
-            $mail->SMTPSecure = PHPMailer::ENCRYPTION_STARTTLS;
-            $mail->Port = 587;
+        // Email settings
+        $to = 'email2@localhost';
+        $subject = 'Password Reset Request';
+        $headers = "From: ABC Cinema <email1@localhost>\r\n";
+        $headers .= "Reply-To: email1@localhost\r\n";
+        $headers .= "Content-Type: text/html; charset=UTF-8\r\n";
 
-            // Email settings
-            $mail->setFrom('adamcheehean01@gmail.com', 'ABC Cinema');
-            $mail->addAddress($email); // Recipient email address
-            $mail->Subject = 'Password Reset Request';
-            $mail->isHTML(true);
-            $mail->Body    = $email_content;
 
-            // Send email
-            $mail->send();
+       // Send the email
+        if (mail($to, $subject, $email_content, $headers)) {
             echo "<script>
                 alert('Password reset link has been sent to your email');
                 window.location.href = 'login.php';
             </script>";
-        } catch (Exception $e) {
-            echo "<script>alert('Failed to send email. Mailer Error: {$mail->ErrorInfo}');</script>";
+        } else {
+            echo "<script>alert('Failed to send email.');</script>";
         }
     } else {
         echo "<script>alert('Invalid email address');</script>";

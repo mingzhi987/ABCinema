@@ -4,6 +4,7 @@ session_start();
 //install "composer", then composer init, composer install, composer require phpmailer/phpmailer
 require 'vendor/autoload.php';
 require 'dbconnection.php';
+
 use PHPMailer\PHPMailer\PHPMailer;
 use PHPMailer\PHPMailer\Exception;
 
@@ -14,7 +15,6 @@ if (!isset($_SESSION['token_id'])) {
     header("Location: movies.php");
     exit; // Redirect to login if not logged in
 }
-
 
 // Create a connection to the MySQL database
 $conn = new mysqli($servername, $username, $password, $database);
@@ -41,7 +41,6 @@ if ($result->num_rows > 0) {
     echo "Invalid login token.";
     exit;
 }
-
 
 // Retrieve the shopping cart linked to the user
 $sql = "SELECT ShoppingCartID FROM shoppingcart WHERE UserID = ?";
@@ -87,41 +86,48 @@ while ($row = $result->fetch_assoc()) {
 $stmt->close();
 $conn->close();
 
+//TODO: molest here
 // Construct the email body
-$emailBody = "Hello $user_fullName! You have successfully purchased tickets from our website, please check them out under your profile page!\n\nDetails are as follows:\n\n";
+$emailBody = "Hello $user_fullName! Thank you for purchasing tickets from our website, please check them out under your profile page!\n\nDetails are as follows:\n\n";
 
+// Initialize the HTML table for the email body
+$emailBody = "<table border='1'>";
+$emailBody .= "<tr>
+    <th>ScreenTimeID</th>
+    <th>Movie</th>
+    <th>Date</th>
+    <th>Cost</th>
+    <th>Cinema Hall</th>
+    <th>Seat Number</th>
+</tr>";
+
+// Loop through cart items to populate table rows
 foreach ($cartItems as $item) {
-    $emailBody .= "Screening Details\n";
-    $emailBody .= "ScreenTimeID: " . htmlspecialchars($item['ScreenTimeID']) . "\n";
-    $emailBody .= "Movie: " . htmlspecialchars($item['MovieName']) . "\n";
-    $emailBody .= "Date: " . htmlspecialchars($item['ScreenTimeDate']) . "\n";
-    $emailBody .= "Cost: $" . htmlspecialchars($item['ScreenTimeCost']) . "\n";
-    $emailBody .= "Cinema Hall: " . htmlspecialchars($item['CinemaHall']) . "\n";
-    $emailBody .= "Seat Number: " . htmlspecialchars($item['SeatNumber']) . "\n\n";
+    $emailBody .= "<tr>";
+    $emailBody .= "<td>" . htmlspecialchars($item['ScreenTimeID']) . "</td>";
+    $emailBody .= "<td>" . htmlspecialchars($item['MovieName']) . "</td>";
+    $emailBody .= "<td>" . htmlspecialchars($item['ScreenTimeDate']) . "</td>";
+    $emailBody .= "<td>$" . htmlspecialchars($item['ScreenTimeCost']) . "</td>";
+    $emailBody .= "<td>" . htmlspecialchars($item['CinemaHall']) . "</td>";
+    $emailBody .= "<td>" . htmlspecialchars($item['SeatNumber']) . "</td>";
+    $emailBody .= "</tr>";
 }
 
-try {
+// Close the HTML table
+$emailBody .= "</table>";
 
-     // Server settings
-    $mail->isSMTP();
-    $mail->Host = 'smtp.gmail.com';
-    $mail->SMTPAuth = true;
-    $mail->Username = 'adamcheehean01@gmail.com'; // Your Gmail address
-    $mail->Password = 'lqot wuvq xiuq xwbi';    // App password from Google
-    $mail->SMTPSecure = PHPMailer::ENCRYPTION_STARTTLS;
-    $mail->Port = 587;
+$emailBody .= "<br><img src='images/logo/logo.png' alt='Movie Image' width='200' height='150'>";
 
-    // Email settings
-    $mail->setFrom('adamcheehean01@gmail.com', 'ABC Cinemas');
-    $mail->addAddress($userEmail, 'Recipient Name');
-    $mail->Subject = 'Booking tickets successful!';
-    $mail->Body = $emailBody;
+// Email settings
+$to = 'email2@localhost';
+$subject = 'Booking tickets successful!';
+$headers = "From: ABC Cinemas <email1@localhost>\r\n";
+$headers .= "Reply-To: email1@localhost\r\n";
+$headers .= "Content-Type: text/plain; charset=UTF-8\r\n";
 
-    // Send email
-    $mail->send();
-
+// Send the email
+if (mail($to, $subject, $emailBody, $headers)) {
     echo '<script>alert("Booking Success! Please check your email for confirmation.");</script>';
-} catch (Exception $e) {
-    echo "Message could not be sent. Mailer Error: {$mail->ErrorInfo}";
+} else {
+    echo "Message could not be sent.";
 }
-?>

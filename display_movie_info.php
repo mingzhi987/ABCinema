@@ -43,6 +43,22 @@ if ($isLoggedIn) {
 
 }
 
+// Retrieve available seats if screening date is selected
+$seats = [];
+if (isset($_POST['screening_date'])) {
+    $screening_date = intval($_POST['screening_date']);
+    $sql = "SELECT SeatID, SeatNumber FROM seating 
+            WHERE CinemaNumber IN (SELECT CinemaID FROM cinema WHERE MovieAllocated = ?) 
+            AND SeatID NOT IN (SELECT SeatID FROM shoppingscreening WHERE ScreenTimeID = ?)";
+    $stmt = $conn->prepare($sql);
+    $stmt->bind_param("ii", $movieID, $screening_date);
+    $stmt->execute();
+    $seatingResult = $stmt->get_result();
+    while ($row = $seatingResult->fetch_assoc()) {
+        $seats[] = $row;
+    }
+}
+
 $stmt->close();
 $conn->close();
 ?>
@@ -56,44 +72,6 @@ $conn->close();
     <title><?php echo htmlspecialchars($movie['MovieName']); ?></title>
     <link rel="stylesheet" href="abcmovies.css">
     <link rel="stylesheet" href="all_styles.css">
-    <script>
-
-        //call seats when date selected
-        function fetchSeats(screeningDate) {
-            var movieID = <?php echo $movieID; ?>;
-            var xhr = new XMLHttpRequest();
-            xhr.open("POST", "fetch_seats.php", true);
-            xhr.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
-            xhr.onreadystatechange = function () {
-                if (xhr.readyState === 4 && xhr.status === 200) {
-                    var seats = JSON.parse(xhr.responseText);
-
-                    //display seats by getting seats-container
-                    var seatsContainer = document.getElementById("seats-container");
-                    seatsContainer.innerHTML = "";
-
-                    seats.forEach(function (seat) {
-                        var checkbox = document.createElement("input");
-                        checkbox.type = "checkbox";
-                        checkbox.name = "seats[]";
-                        checkbox.value = seat.SeatID;
-                        checkbox.id = "seat_" + seat.SeatID;
-
-                        var label = document.createElement("label");
-                        label.htmlFor = "seat_" + seat.SeatID;
-                        label.textContent = seat.SeatNumber;
-
-                        seatsContainer.appendChild(checkbox);
-                        seatsContainer.appendChild(label);
-                        seatsContainer.appendChild(document.createElement("br"));
-                    });
-                }
-            };
-
-            //send screening date and movie id to fetch_seats.php
-            xhr.send("screening_date=" + screeningDate + "&movie_id=" + movieID);
-        }
-    </script>
 </head>
 <body>
     <!-- Nav bar -->
@@ -130,22 +108,31 @@ $conn->close();
 
                     <?php if ($isLoggedIn): ?>
                     <h2>Select Screening Date</h2>
-                    <form method="post" action="add_movie_to_cart.php">
+                    <form method="post" action="">
                         <label for="screening_date">Screening Date:</label>
-                        <select name="screening_date" id="screening_date" required onchange="fetchSeats(this.value)">
+                        <select name="screening_date" id="screening_date" required onchange="this.form.submit()">
                             <option value="">Select a date</option>
                             <?php while ($screening = $screeningResult->fetch_assoc()): ?>
-                                <option value="<?php echo htmlspecialchars($screening['ScreenTimeID']); ?>">
+                                <option value="<?php echo htmlspecialchars($screening['ScreenTimeID']); ?>" <?php echo (isset($screening_date) && $screening_date == $screening['ScreenTimeID']) ? 'selected' : ''; ?>>
                                     <?php echo htmlspecialchars($screening['ScreenTimeDate']); ?>
                                 </option>
                             <?php endwhile; ?>
                         </select>
+                    </form>
 
-                        <h2>Select Seats</h2>
-                        <div id="seats-container"></div>
-
+                    <?php if (!empty($seats)): ?>
+                    <h2>Select Seats</h2>
+                    <form method="post" action="add_movie_to_cart.php">
+                        <input type="hidden" name="screening_date" value="<?php echo htmlspecialchars($screening_date); ?>">
+                        <div id="seats-container">
+                            <?php foreach ($seats as $seat): ?>
+                                <input type="checkbox" name="seats[]" value="<?php echo htmlspecialchars($seat['SeatID']); ?>" id="seat_<?php echo htmlspecialchars($seat['SeatID']); ?>">
+                                <label for="seat_<?php echo htmlspecialchars($seat['SeatID']); ?>"><?php echo htmlspecialchars($seat['SeatNumber']); ?></label><br>
+                            <?php endforeach; ?>
+                        </div>
                         <button type="submit">Book Now</button>
                     </form>
+                    <?php endif; ?>
                     <?php else: ?>
                         <p>Please log in or sign up to purchase tickets!</p>
                         <a href="login.php"><button>Log In / Sign Up</button></a>
