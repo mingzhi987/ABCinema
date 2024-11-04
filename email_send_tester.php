@@ -69,6 +69,10 @@ while ($row = $result->fetch_assoc()) {
 $stmt->close();
 $conn->close();
 
+$logoPath = 'images/logo/logo.png';
+$logoData = base64_encode(file_get_contents($logoPath));
+$logoSrc = 'data:image/png;base64,' . $logoData;
+
 // Construct the email body
 $emailBody = "
 <html>
@@ -106,7 +110,9 @@ foreach ($bookings as $booking) {
 // Close the HTML table
 $emailBody .= "</table>";
 
-$emailBody .= "<br><img src='images/logo/logo.png' alt='Movie Image' width='200' height='150'>
+
+$emailBody .= "<br><p>Thank you for choosing ABCinemas!</p>
+<img src='$logoSrc' alt='Movie Image' width='200' height='150'>
 </body>
 </html>";
 
