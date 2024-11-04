@@ -1,15 +1,7 @@
 <?php
 session_start();
 
-//install "composer", then composer init, composer install, composer require phpmailer/phpmailer
-require 'vendor/autoload.php';
 require 'dbconnection.php';
-
-use PHPMailer\PHPMailer\PHPMailer;
-use PHPMailer\PHPMailer\Exception;
-
-$mail = new PHPMailer(true);
-
 
 if (!isset($_SESSION['token_id'])) {
     header("Location: movies.php");
@@ -127,7 +119,7 @@ $headers .= "Content-Type: text/plain; charset=UTF-8\r\n";
 
 // Send the email
 if (mail($to, $subject, $emailBody, $headers)) {
-    echo '<script>alert("Booking Success! Please check your email for confirmation.");</script>';
+    echo "<script>alert('Booking Success! Please check your email for confirmation.'); window.location.href='movies.php';</script>";
 } else {
-    echo "Message could not be sent.";
+    echo "<script>alert('Something went wrong when sending email, please try again!'); window.location.href='checkout.php';</script>";
 }

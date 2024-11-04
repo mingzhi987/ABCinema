@@ -4,7 +4,7 @@ require 'dbconnection.php';
 
 // Check if the user is logged in
 if (!isset($_SESSION['token_id'])) {
-    echo json_encode(['status' => 'error', 'message' => 'You must be logged in to make a booking.']);
+    header('Location: login.php');
     exit;
 }
 
@@ -24,7 +24,7 @@ if ($result->num_rows > 0) {
     $user = $result->fetch_assoc();
     $userid = $user['UserID'];
 } else {
-    echo json_encode(['status' => 'error', 'message' => 'Invalid login token.']);
+    echo "<script>alert('Invalid login token.'); window.location.href='login.php';</script>";
     exit;
 }
 
@@ -39,29 +39,56 @@ if ($result->num_rows > 0) {
     $shoppingCart = $result->fetch_assoc();
     $shoppingCartID = $shoppingCart['ShoppingCartID'];
 } else {
-    echo json_encode(['status' => 'error', 'message' => 'No items in the shopping cart.']);
+    echo "<script>alert('No items in the shopping cart.'); window.location.href='checkout.php';</script>";
     exit;
 }
 
 // Retrieve cart items from the request
-$cartItems = json_decode(file_get_contents('php://input'), true);
+$cartItems = json_decode($_POST['cartItems'], true);
 
 if (empty($cartItems)) {
-    echo json_encode(['status' => 'error', 'message' => 'No cart items provided.']);
+    echo "<script>alert('No cart items provided.'); window.location.href='checkout.php';</script>";
     exit;
 }
 
+
+$newbookingsInserted = false;
+
 // Insert each cart item into the bookings table
 foreach ($cartItems as $item) {
-    $sql = "INSERT INTO booking (PaymentDate, UserID, ShoppingCartID, MovieName, Showtime, CinemaHall, SeatNo, Price) 
+    // Check for identical entries in the booking table
+    $check_sql = "SELECT * FROM booking WHERE UserID = ? AND ShoppingCartID = ? AND MovieName = ? AND Showtime = ? AND CinemaID = ? AND SeatID = ?";
+    $check_stmt = $conn->prepare($check_sql);
+    $check_stmt->bind_param("iissss", $userid, $shoppingCartID, $item['MovieName'], $item['ScreenTimeID'], $item['CinemaID'], $item['SeatID']);
+    $check_stmt->execute();
+    $check_result = $check_stmt->get_result();
+
+    if ($check_result->num_rows > 0) {
+        // Duplicate entry found, skip insertion
+        continue;
+    }
+
+    // Insert the booking if no duplicate is found
+    $sql = "INSERT INTO booking (PaymentDate, UserID, ShoppingCartID, MovieName, Showtime, CinemaID, SeatID, Price) 
             VALUES (NOW(), ?, ?, ?, ?, ?, ?, ?)";
     $stmt = $conn->prepare($sql);
-    $stmt->bind_param("iissssd", $userid, $shoppingCartID, $item['MovieName'], $item['ScreenTimeDate'], $item['CinemaHall'], $item['SeatNumber'], $item['ScreenTimeCost']);
-    $stmt->execute();
+    $stmt->bind_param("iissssd", $userid, $shoppingCartID, $item['MovieName'], $item['ScreenTimeID'], $item['CinemaID'], $item['SeatID'], $item['ScreenTimeCost']);
+    if (!$stmt->execute()) {
+        echo "<script>alert('Error inserting booking: " . $stmt->error . "'); window.location.href='checkout.php';</script>";
+        exit;
+    }
+    $newbookingsInserted = true;
 }
 
 $stmt->close();
 $conn->close();
 
-echo json_encode(['status' => 'success', 'message' => 'Bookings inserted successfully.']);
+if ($newBookingsInserted) {
+    echo json_encode(['status' => 'success', 'message' => 'Bookings inserted successfully.']);
+    header("Location: email_send_tester.php");
+    exit;
+} else {
+    echo "<script>alert('No new bookings were inserted due to duplicates.'); window.location.href='checkout.php';</script>";
+}
+
 ?>

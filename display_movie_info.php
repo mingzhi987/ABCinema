@@ -49,7 +49,7 @@ if (isset($_POST['screening_date'])) {
     $screening_date = intval($_POST['screening_date']);
     $sql = "SELECT SeatID, SeatNumber FROM seating 
             WHERE CinemaNumber IN (SELECT CinemaID FROM cinema WHERE MovieAllocated = ?) 
-            AND SeatID NOT IN (SELECT SeatID FROM shoppingscreening WHERE ScreenTimeID = ?)";
+            AND SeatID NOT IN (SELECT SeatID FROM booking WHERE Showtime = ?)";
     $stmt = $conn->prepare($sql);
     $stmt->bind_param("ii", $movieID, $screening_date);
     $stmt->execute();

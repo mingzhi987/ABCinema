@@ -51,12 +51,12 @@ if ($result->num_rows > 0) {
 // Query to get movie screening details and seats in the shopping cart
 $sql = "
     SELECT 
-        st.ScreenTimeID, st.ScreenTimeDate, st.ScreenTimeCost, c.CinemaHall, m.MovieName, s.SeatNumber
+        st.ScreenTimeID, st.ScreenTimeDate, st.ScreenTimeCost, c.CinemaID c.CinemaHall, m.MovieName, s.SeatID, s.SeatNumber
     FROM 
         shoppingscreening AS ss
     JOIN 
         screeningtime2 AS st ON ss.ScreenTimeID = st.ScreenTimeID
-    JOIN 
+    JOIN q
         cinema AS c ON st.SeatingLocation = c.CinemaID
     JOIN 
         movies AS m ON st.ScreeningMovie = m.MovieID
@@ -148,7 +148,10 @@ while ($row = $result->fetch_assoc()) {
             <div class="total-price">
                 <strong>Total Price:</strong> $<?php echo number_format($totalPrice, 2); ?>
             </div>
-            <button class="checkout-btn" onclick="checkoutAlert()">Checkout</button>
+           <form id="checkoutForm" method="post" action="insert_bookings.php">
+                <input type="hidden" name="cartItems" value='<?php echo json_encode($cartItems); ?>'>
+                <button class="checkout-btn" type="button" onclick="checkoutAlert()">Proceed to Checkout</button>
+            </form>
         <?php else: ?>
             <p>Your cart is empty.</p>
         <?php endif; ?>
@@ -200,37 +203,7 @@ while ($row = $result->fetch_assoc()) {
 <script>
     function checkoutAlert() {
         if (confirm("Confirm checkout?")) {
-            
-            //insert bookings
-            var cartItems = <?php echo json_encode($cartItems); ?>;
-
-            var xhr = new XMLHttpRequest();
-            xhr.open("POST", "insert_bookings.php", true);
-            xhr.setRequestHeader("Content-Type", "application/json");
-            xhr.onreadystatechange = function () {
-                if (xhr.readyState === 4) {
-                    console.log("XHR Status:", xhr.status); // Debugging: Log XHR status
-                    console.log("XHR Response:", xhr.responseText); // Debugging: Log XHR response
-                    if (xhr.status === 200) {
-                        try {
-                            var response = JSON.parse(xhr.responseText);
-                            if (response.status === 'success') {
-                                // Send email on booking success
-                                window.location.href = "email_send_tester.php";
-                            } else {
-                                console.log(response.message);
-                                alert(response.message);
-                            }
-                        } catch (e) {
-                            console.error("Error parsing JSON response:", e);
-                            console.error("Response text:", xhr.responseText);
-                        }
-                    } else {
-                        alert("An error occurred while processing your request.");
-                    }
-                }
-            };
-            xhr.send(JSON.stringify(cartItems));
+            document.getElementById('checkoutForm').submit();
         }
     }
 </script>

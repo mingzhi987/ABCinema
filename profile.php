@@ -49,6 +49,54 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['update_profile'])) {
     }
 }
 
+// Handle modify booking
+if (isset($_POST['modify_booking']) && isset($_POST['booking_id']) && isset($_POST['new_showtime']) && isset($_POST['new_seat'])) {
+    $bookingID = intval($_POST['booking_id']);
+    $newShowtime = $_POST['new_showtime'];
+    $newSeat = intval($_POST['new_seat']);
+
+    // Check if the new showtime and seat are available
+    $sql = "SELECT * FROM booking WHERE Showtime = ? AND SeatNo = ?";
+    $stmt = $conn->prepare($sql);
+    $stmt->bind_param("si", $newShowtime, $newSeat);
+    $stmt->execute();
+    $result = $stmt->get_result();
+
+    if ($result->num_rows > 0) {
+        echo "<script>alert('The selected showtime and seat are already taken.'); window.location.href='profile.php'</script>";
+    } else {
+        // Update the booking with the new showtime and seat
+        $sql = "UPDATE booking SET Showtime = ?, SeatNo = ? WHERE BookingID = ? AND UserID = ?";
+        $stmt = $conn->prepare($sql);
+        $stmt->bind_param("siii", $newShowtime, $newSeat, $bookingID, $userid);
+        if ($stmt->execute()) {
+            echo "<script>alert('Booking modified successfully!'); window.location.href='profile.php'</script>";
+        } else {
+            echo "<script>alert('Error modifying booking: " . $stmt->error . "');</script>";
+        }
+    }
+
+    $stmt->close();
+}
+
+// Handle refund booking
+if (isset($_POST['refund_booking']) && isset($_POST['booking_id'])) {
+    $bookingID = intval($_POST['booking_id']);
+
+    // Delete the booking
+    $sql = "DELETE FROM booking WHERE BookingID = ? AND UserID = ?";
+    $stmt = $conn->prepare($sql);
+    $stmt->bind_param("ii", $bookingID, $userid);
+    if ($stmt->execute()) {
+        echo "<script>alert('Booking refunded successfully!'); window.location.href='profile.php'</script>";
+    } else {
+        echo "<script>alert('Error refunding booking: " . $stmt->error . "');</script>";
+    }
+
+    $stmt->close();
+}
+
+
 // Handle gifting booking
 if (isset($_POST['gift_booking']) && isset($_POST['recipient_email']) && isset($_POST['booking_id'])) {
     $recipientEmail = $_POST['recipient_email'];
@@ -139,6 +187,7 @@ if (isset($_POST['gift_booking']) && isset($_POST['recipient_email']) && isset($
                 <th>Cinema Hall</th>
                 <th>Seat Number</th>
                 <th>Gift</th>
+                <th>Modify/Refund</th>
             </tr>
             <?php
             // Retrieve bookings / tickets for the user
@@ -147,6 +196,12 @@ if (isset($_POST['gift_booking']) && isset($_POST['recipient_email']) && isset($
 
             if ($bookingResult->num_rows > 0) {
                 while ($booking = $bookingResult->fetch_assoc()) {
+                    $showtime = new DateTime($booking['Showtime']);
+                    $now = new DateTime();
+                    $interval = $now->diff($showtime);
+                    $daysUntilShowtime = $interval->format('%a');
+
+
                     echo "<tr>";
                     echo "<td>" . $booking['BookingID'] . "</td>";
                     echo "<td>" . $booking['PaymentDate'] . "</td>";
@@ -162,6 +217,20 @@ if (isset($_POST['gift_booking']) && isset($_POST['recipient_email']) && isset($
                     echo "<input type='text' name='recipient_email' placeholder='Recipient email'>";
                     echo "<button type='submit' name='gift_booking'>Gift</button>";
                     echo "</form>";
+                    echo "</td>";
+                    echo "<td>";
+                    if ($daysUntilShowtime > 2) {
+                        echo "<form method='POST' action='' style='display:inline-block;'>";
+                        echo "<input type='hidden' name='booking_id' value='" . htmlspecialchars($booking['BookingID']) . "'>";
+                        echo "<button type='submit' name='refund_booking'>Refund</button>";
+                        echo "</form> <br/>";
+                        echo "<form method='POST' action='change_booking.php' style='display:inline-block;'>";
+                        echo "<input type='hidden' name='booking_id' value='" . htmlspecialchars($booking['BookingID']) . "'>";
+                        echo "<button type='submit' name='modify_booking'>Modify</button>";
+                        echo "</form>";
+                    } else {
+                        echo "Modification/Refund not allowed within 2 days of showtime.";
+                    }
                     echo "</td>";
                     echo "</tr>";
                 }
