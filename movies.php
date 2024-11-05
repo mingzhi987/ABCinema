@@ -96,7 +96,7 @@ if ($genresResult->num_rows > 0) {
         </a>
         <div class="header-left">
             <a href="#contact" alt="Contact">Contact</a>
-            <a href="#about" alt="About">About us</a>
+            <a href="about_us.html" alt="About">About us</a>
         </div>
         <div class="menu-icons">
             <a href="checkout.php"><img src="images/icons/basket.svg" alt="Checkout" /></a>
@@ -167,7 +167,7 @@ if ($genresResult->num_rows > 0) {
     
         <div id="movieList"></div>
     
-        <div id="pagination"></div>
+        <div class="pagination" id="pagination"></div>
     
         <script>
             // Load initial movie list
@@ -294,30 +294,19 @@ if ($genresResult->num_rows > 0) {
         showSlides(slideIndex += n);
     }
 
-    // Thumbnail image controls
-    function currentSlide(n) {
-        showSlides(slideIndex = n);
-    }
+    setInterval(function() {
+        plusSlides(1);
+    }, 5000);
 
     function showSlides(n) {
         let i;
         let slides = document.getElementsByClassName("mySlides");
-        let dots = document.getElementsByClassName("dot");
-        if (n > slides.length) {
-            slideIndex = 1
-        }
-        if (n < 1) {
-            slideIndex = slides.length
-        }
+        if (n > slides.length) {slideIndex = 1}
+        if (n < 1) {slideIndex = slides.length}
         for (i = 0; i < slides.length; i++) {
             slides[i].style.display = "none";
         }
-        for (i = 0; i < dots.length; i++) {
-            dots[i].className = dots[i].className.replace(" active", "");
-        }
-        slides[slideIndex - 1].style.display = "block";
-        dots[slideIndex - 1].className += " active";
-        setTimeout(showSlides(slideIndex), 2000);
+        slides[slideIndex-1].style.display = "block";
     }
 
 </script>
