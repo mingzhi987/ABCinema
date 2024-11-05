@@ -1,3 +1,47 @@
+
+
+.header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px 20px;
+    background-color: #dbdbdb;
+}
+
+.header-left,
+.header-right {
+    display: flex;
+    align-items: center;
+}
+
+.header-left a,
+.header-right a {
+    text-decoration: none;
+    margin: 0 10px;
+}
+
+.header-left a.active {
+    font-weight: bold;
+}
+
+.header-right img {
+    width: 24px;
+    height: 24px;
+}
+
+.logo {
+    width: 100px;
+}
+
+.content-container{
+    display: flex;
+    flex-direction: column;
+    /* min-height: 100%; */
+    flex-grow: 1;
+}
+
+
+
 .container-about-us{
     margin: 20px;
 }

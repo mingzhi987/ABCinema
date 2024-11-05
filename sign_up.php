@@ -90,18 +90,21 @@
     <title>Sign Up</title>
     <link rel="stylesheet" href="abcmovies.css">
     <link rel="stylesheet" href="all_styles.css">
+    <link rel="stylesheet" href="about_us.css">
 </head>
 <body>
     <!-- Nav bar -->
-    <div class="header" style="height: 12.7%;">
-        <a href="movies.php">
-            <img class=logo src="images/logo/logo.png" href="#">
-        </a>
-        <div class="header-left">
-            <a href="#contact" alt="Contact">Contact</a>
-            <a href="#about" alt="About">About us</a>
+    <div class="header" style="padding-bottom: 5px;">
+        <div>
+            <a href="movies.php">
+                <img class=logo src="images/logo/logo.png">
+            </a>
+            <div class="header-left">
+                <a href="movies.php" alt="Movies">Movies</a>
+                <a href="about_us.html" alt="About us">About us</a>
+            </div>
         </div>
-        <div class="menu-icons">
+        <div class="header-right">
             <a href="checkout.php"><img src="images/icons/basket.svg" alt="Checkout" /></a>
             <?php if (isset($_SESSION['token_id'])): ?>
                 <a href="profile.php"><img src="images/icons/profile.svg" alt="Profile" /></a>
@@ -110,6 +113,7 @@
             <?php endif; ?>
         </div>
     </div>
+
     <div class="body-content">
     <h1 style = "margin-top: 30px; margin-bottom: 30px; text-transform: uppercase;">Sign Up</h1>
         <div class="sign-up-in-form">
@@ -140,30 +144,29 @@
     <div class="footer-container">
         <div class="row">
             <div class="column-1"><img class="logo" src="images/logo/logo.png">
-                <div class="footer-summary">Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat</div>
+                <div class="footer-summary">Welcome to ABCinema, a modern cinema delivering immersive experiences with top-notch visuals, sound, and cosy seating. Discover blockbusters, indie films, and local gems—all designed to captivate and inspire.
+                </div>
             </div>
 
             <div class="column-2">
-                <h4>Links</h4>
-                <ul>
-                    <li class="footer-links"><a href="http://demo.amytheme.com/movie/demo/elementor-single-cinema/" aria-current="page">Home</a></li>
-                    <li class="footer-links"><a href="http://demo.amytheme.com/movie/demo/elementor-single-cinema/coming-soon/">Coming Soon</a></li>
-                    <li class="footer-links"><a href="http://demo.amytheme.com/movie/demo/elementor-single-cinema/top-rated/">Top rated</a></li>
-                </ul>
+                <h2>Links</h2>
+                    <p class="footer-links"><a href="http://demo.amytheme.com/movie/demo/elementor-single-cinema/" aria-current="page">Home</a></p>
+                    <p class="footer-links"><a href="http://demo.amytheme.com/movie/demo/elementor-single-cinema/coming-soon/">Movies</a></p>
+                    <p class="footer-links"><a href="http://demo.amytheme.com/movie/demo/elementor-single-cinema/top-rated/">About us</a></p>
             </div>
 
             <div class="column-2">
-                <h4>Contact Us</h4>
-                123 Raffles Place #14-01 <br> Singapore 348023
-                <p>support@abcinema.com.sg
-                <p>+65 63498203
+                <h2>Contact Us</h2>
+                234 Film Street #01-01 <br> Singapore 690234
+                <p>contact@abcinema.com.sg
+                <p>+65 6349 8203
             </div>
 
             <div class="column-2">
-                <h4>Follow Us</h4>
-                <img src="images/icons/twitter-x.svg" alt="X (Twitter)" />
-                <img src="images/icons/facebook.svg" alt="Facebook" />
-                <img src="images/icons/instagram.svg" alt="Instagram" />
+                <h2>Follow Us</h2>
+                <img id="footer-icons" src="images/icons/twitter-x.svg" alt="X (Twitter)" />
+                <img id="footer-icons" src="images/icons/facebook.svg" alt="Facebook" />
+                <img id="footer-icons" src="images/icons/instagram.svg" alt="Instagram" />
             </div>
         </div>
     </div>

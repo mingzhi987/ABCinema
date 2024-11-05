@@ -1,22 +1,15 @@
-@font-face {
-    font-family: 'Futura';
-    src: url('./fonts/FuturaCyrillicBook.woff') format('woff');
-    font-weight: normal;
-    font-style: normal;
-  }
 
-
-* {
-    font-family: Futura;
-    padding: 0;
-    box-sizing: border-box;
-}
 
 html, body{
     height: 100%;
     display: flex;
     flex-direction: column;
 }
+
+body{
+    background-color: #ececec;
+}
+
 .header {
     overflow: visible;
     background-color: #dbdbdb;
@@ -53,13 +46,13 @@ html, body{
 
 /* login content */
 .sign-up-in-form{
-    border: 1px solid #000;
     border-radius: 10px;
     padding: 10px;
     margin: 5px;
     padding-left: 50px;
     text-align: left;
     width: 90%;
+    box-shadow: 0 4px 4px 4px rgba(0,0,0,0.2);
 }
 #sign_in{
     margin: 10px;

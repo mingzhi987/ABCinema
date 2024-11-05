@@ -44,7 +44,7 @@ if ($result->num_rows > 0) {
     $shoppingCartID = $shoppingCart['ShoppingCartID'];
     $retrieved_totalPrice = $shoppingCart['TotalPrice'];
 } else {
-    echo "No items in the shopping cart.";
+    echo "<script>alert('No items in the shopping cart.'); window.history.back();</script>";
     exit;
 }
 

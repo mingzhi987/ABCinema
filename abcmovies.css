@@ -5,17 +5,28 @@
   font-style: normal;
 }
 
-* {
-  font-family: Futura;
-  padding: 0;
+/* Hide scrollbar for Chrome, Safari and Opera */
+::-webkit-scrollbar {
+  display: none;
+}
+
+/* Hide scrollbar for IE, Edge and Firefox */
+.scrollbar {
+  -ms-overflow-style: none;  /* IE and Edge */
+  scrollbar-width: none;  /* Firefox */
 }
 
 
 /* General */
 html, body {
+    overflow-x: hidden;
     margin: 0px;
     padding: 0px;
     height: 100%;
+}
+
+body{
+  background-color: #ececec;
 }
 
 .content-wrapper {
@@ -139,7 +150,7 @@ hr.dotted {
   .menu-icons {
     float: right;
     align-items: center;
-    width:25%;
+    width:15%;
   }
 
   .menu-icons img{
@@ -398,14 +409,14 @@ hr.dotted {
     display: inline-block;
     margin-top: 10px;
     padding: 10px 20px;
-    background-color: #007bff;
+    background-color: #ffa513;
     color: white;
     text-decoration: none;
     border-radius: 5px;
   }
   
   .movies-card a:hover {
-    background-color: #0056b3;
+    background-color: #cc840f;
   }
   
   /* Responsive columns - one column layout (vertical) on small screens */
@@ -424,30 +435,31 @@ hr.dotted {
 }
 
 
-/* Pagination styles */
-.pagination {
+ /* Pagination styles */
+ .pagination {
   display: flex;
   justify-content: center;
-  width: 100%;
   margin: 20px 0;
 }
 
-.pagination a {
-  color: black;
+.pagination button {
+  color: white;
   padding: 8px 16px;
   text-decoration: none;
-  border: 1px solid #ddd;
-  margin: 0 4px;
-}
-
-.pagination a.active {
-  background-color: #007bff;
-  color: white;
   border: 1px solid #007bff;
+  margin: 0 4px;
+  background-color: #007bff; /* Blue background */
+  border-radius: 5px;
+  transition-duration: 0.4s;
 }
 
-.pagination a:hover:not(.active) {
-  background-color: #ddd;
+.pagination button.active {
+  background-color: #0056b3; /* Darker blue for active page */
+  border: 1px solid #0056b3;
+}
+
+.pagination button:hover:not(.active) {
+  background-color: #0056b3; /* Darker blue on hover */
 }
 
 /* footer */
@@ -502,4 +514,142 @@ footer{
 
 .logo{
     width: 100px;
+}
+
+/* profile page things */
+.profile-details {
+  width: 60%;
+  margin: 0 auto;
+}
+
+.profile-details h1 {
+  text-align: center;
+  margin-bottom: 20px;
+}
+
+.profile-details form {
+  display: flex;
+  flex-direction: column;
+  gap: 15px; /* Define the gap between each input */
+  margin: 5px;
+}
+
+.profile-details label {
+  font-weight: bold;
+}
+
+.profile-details input[type="text"],
+.profile-details input[type="email"],
+.profile-details input[type="password"],
+.profile-details input[type="date"] {
+  width: 100%;
+  padding: 5px;
+  margin-bottom: 10px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+}
+
+.profile-details button {
+  padding: 10px;
+  background-color: #007bff;
+  width: 15%;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+#submitUpdates {
+  background-color: #ffa513; /* Updated color */
+}
+
+#submitUpdates:hover {
+  background-color: #cc840f; /* Darker shade for hover effect */
+}
+
+.profile-details button:hover {
+  background-color: #0056b3;
+}
+
+.profile-details .logout-button {
+  margin-top: 20px;
+  background-color: #dc3545;
+}
+
+.profile-details .logout-button:hover {
+  background-color: #c82333;
+}
+
+ /* Table styling */
+ table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 20px;
+}
+
+table, th, td {
+  border: 1px solid #ddd;
+}
+
+th, td {
+  padding: 10px;
+  text-align: left;
+}
+
+th {
+  background-color: #f2f2f2;
+}
+
+/* Alternate row colors */
+tr:nth-child(odd) {
+  background-color: #f9f9f9;
+}
+
+tr:nth-child(even) {
+  background-color: #e0e0e0;
+}
+
+.btn {
+  padding: 8px 16px;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  color: white;
+  text-align: center;
+  text-decoration: none;
+  display: inline-block;
+  font-size: 14px;
+  margin: 4px 2px;
+  transition-duration: 0.4s;
+  flex: 1;
+}
+
+.btn-refund {
+  background-color: #dc3545;
+}
+
+.btn-refund:hover {
+  background-color: #c82333;
+}
+
+.btn-modify {
+  background-color: #ffa513; /* Updated color */
+}
+
+.btn-modify:hover {
+  background-color: #cc840f; /* Darker shade for hover effect */
+}
+
+.btn-gift {
+  background-color: #ffa513; /* Updated color */
+}
+
+.btn-gift:hover {
+  background-color: #cc840f; /* Darker shade for hover effect */
+}
+
+.actions-container{
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
 }
