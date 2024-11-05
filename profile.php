@@ -49,36 +49,6 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['update_profile'])) {
     }
 }
 
-// Handle modify booking
-// if (isset($_POST['modify_booking']) && isset($_POST['booking_id']) && isset($_POST['new_showtime']) && isset($_POST['new_seat'])) {
-//     $bookingID = intval($_POST['booking_id']);
-//     $newShowtime = $_POST['new_showtime'];
-//     $newSeat = intval($_POST['new_seat']);
-
-//     // Check if the new showtime and seat are available
-//     $sql = "SELECT * FROM booking WHERE Showtime = ? AND SeatNo = ?";
-//     $stmt = $conn->prepare($sql);
-//     $stmt->bind_param("si", $newShowtime, $newSeat);
-//     $stmt->execute();
-//     $result = $stmt->get_result();
-
-//     if ($result->num_rows > 0) {
-//         echo "<script>alert('The selected showtime and seat are already taken.'); window.location.href='profile.php'</script>";
-//     } else {
-//         // Update the booking with the new showtime and seat
-//         $sql = "UPDATE booking SET Showtime = ?, SeatID = ? WHERE BookingID = ? AND UserID = ?";
-//         $stmt = $conn->prepare($sql);
-//         $stmt->bind_param("siii", $newShowtime, $newSeat, $bookingID, $userid);
-//         if ($stmt->execute()) {
-//             echo "<script>alert('Booking modified successfully!'); window.location.href='profile.php'</script>";
-//         } else {
-//             echo "<script>alert('Error modifying booking: " . $stmt->error . "');</script>";
-//         }
-//     }
-
-//     $stmt->close();
-// }
-
 // Handle refund booking
 if (isset($_POST['refund_booking']) && isset($_POST['booking_id'])) {
     $bookingID = intval($_POST['booking_id']);

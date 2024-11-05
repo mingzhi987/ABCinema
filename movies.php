@@ -165,7 +165,7 @@ if ($genresResult->num_rows > 0) {
             <button onclick="applySearch()">Search</button>
         </div>
     
-        <div id="movieList"></div>
+        <div class="nonsense" style="display: flex; justify-content: center;"><div id="movieList"></div></div>
     
         <div class="pagination" id="pagination"></div>
     

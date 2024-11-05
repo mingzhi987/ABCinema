@@ -335,6 +335,7 @@ hr.dotted {
   display: flex;
   flex-direction: row;
   flex-wrap: wrap;
+  width: 70%;
 }
 
 .movies{
@@ -369,7 +370,7 @@ hr.dotted {
     margin: 10px;
     border-radius: 10px;
     width: 350px; /* Fixed width */
-    height: 500px; /* Fixed height */
+    height: 550px; /* Fixed height */
     display: flex;
     flex-direction: column;
     justify-content: space-between;
