@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" href="images/logo/logo.ico" type="image/x-icon">
+    <link rel="stylesheet" href="abcmovies.css">
+    <link rel="stylesheet" href="admin.css">
+    <title>Admin Page | ABCinema</title>
+</head>
+
+<body>
+    <!-- Nav bar -->
+    <div class="header">
+        <a href="movies.php">
+            <img class=logo src="images/logo/logo.png">
+        </a>
+        <div class="header-left" id="admin">
+            <h1>Admin Page</h1>
+        </div>
+        <div class="header-right">
+        </div>
+    </div>
+
+    <div>
+        <div class="dashboard">
+            <h1>Dashboard</h1>
+            <div class="dashboard-container">
+                <div class="box">
+                    <p>No of movies:</p>
+                    <p>13</p>
+                </div>
+                <div class="box">
+                    <p>Total Sales: </p>
+                    <p>$6969.69</p>
+                </div>
+                <div class="box">
+                    <p>Seats sold:</p>
+                    <p>39</p>
+                </div>
+            </div>
+        </div>
+        <div class="admin-container">
+            <form id="myForm">
+            <label for="function">Choose an item to edit:</label>
+            <select name="function" id="function-id">
+            <option value="empty">Select...</option>
+            <option value="movies">Movies</option>
+            <option value="screeningtime2">Screening Time</option>
+            </select>
+            <h1>Movies</h1>
+            <table border="1" class="movies-table">
+                <tr>
+                <th>MovieID</th>
+                <th>MovieName</th>
+                <th>MovieGenre</th>
+                <th>MovieLength</th>
+                <th>MovieRating</th>
+                <th>MovieDesc</th>
+                <th></th>
+                </tr>
+                <tr>
+                <td><input type="text" value="1" readonly></td>
+                <td><input type="text" value="Avatar" readonly></td>
+                <td><input type="text" value="Sci-Fi" readonly></td>
+                <td><input type="text" value="120" readonly></td>
+                <td><input type="text" value="9" readonly></td>
+                <td><textarea readonly> In the forest, far into the future</textarea></td>
+                <td>
+                    <button type="button" onclick="alert('Item Deleted')">Delete</button>
+                </td>
+                </tr>
+            </table>
+            <button type="button" id="modifyButton">Modify</button>
+            <button type="button" id="updateButton" onclick="alert('Changes Updated')">Update</button>
+        </div>
+        <!--
+            <h1>Screening Time</h1>
+            <table border="1" class="movies-table">
+                <tr>
+                <th>ScreenTimeID</th>
+                <th>ScreenTimeDate</th>
+                <th>ScreenTimeCost</th>
+                <th>SeatingLocation</th>
+                <th>ScreeningMovie</th>
+                <th>Delete Item</th>
+                </tr>
+                <tr>
+                <td>1</td>
+                <td>23/12/2024 15:00</td>
+                <td>15.00</td>
+                <td>2</td>
+                <td>Avatar</td>
+                <td>
+                    <button type="button" onclick="alert('Item Deleted')">Delete</button>
+                </td>
+                </tr>
+            </table>
+            <button type="button" onclick="">Modify</button>
+            <button type="button" onclick="alert('Changes Updated')">Update</button>
+        </div>
+        -->
+    </div>
+</body>
+    <main style="flex-grow: 1;">
+    <!-- Footer -->
+    <footer>
+        <div class="footer-container">
+            <div class="row">
+                <div class="column-1"><img class="logo" src="images/logo/logo.png">
+                    <div class="footer-summary">Welcome to ABCinema, a modern cinema delivering immersive experiences with top-notch visuals, sound, and cosy seating. Discover blockbusters, indie films, and local gems—all designed to captivate and inspire.
+                    </div>
+                </div>
+
+                <div class="column-2">
+                    <h2>Links</h2>
+                        <p class="footer-links"><a href="http://demo.amytheme.com/movie/demo/elementor-single-cinema/" aria-current="page">Home</a></p>
+                        <p class="footer-links"><a href="http://demo.amytheme.com/movie/demo/elementor-single-cinema/coming-soon/">Movies</a></p>
+                        <p class="footer-links"><a href="http://demo.amytheme.com/movie/demo/elementor-single-cinema/top-rated/">About us</a></p>
+                </div>
+
+                <div class="column-2">
+                    <h2>Contact Us</h2>
+                    123 Raffles Place #14-01 <br> Singapore 348123
+                    <p>support@abcinema.com.sg
+                    <p>+65 63498203
+                </div>
+
+                <div class="column-2">
+                    <h2>Follow Us</h2>
+                    <img id="footer-icons" src="images/icons/twitter-x.svg" alt="X (Twitter)" />
+                    <img id="footer-icons" src="images/icons/facebook.svg" alt="Facebook" />
+                    <img id="footer-icons" src="images/icons/instagram.svg" alt="Instagram" />
+                </div>
+            </div>
+        </div>
+        </div>
+    </main>
+    </footer>
+</footer>
+
+<script>
+    // Get all text inputs and textareas in the form
+    const inputs = document.querySelectorAll("#myForm input[type='text'], #myForm textarea");
+    const modifyButton = document.getElementById("modifyButton");
+    const updateButton = document.getElementById("updateButton");
+
+    // Function to make inputs editable
+    function enableEditing() {
+        inputs.forEach(input => input.readOnly = false);
+    }
+
+    // Function to make inputs readonly
+    function disableEditing() {
+        inputs.forEach(input => input.readOnly = true);
+    }
+
+    // Event listeners for buttons
+    modifyButton.addEventListener("click", enableEditing);
+    updateButton.addEventListener("click", disableEditing);
+
+    // Set inputs to readonly by default
+    disableEditing();
+</script>
+
+</html>

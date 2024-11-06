@@ -6,70 +6,75 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="abcmovies.css">
     <link rel="stylesheet" href="cart.css">
+    <link rel="icon" href="images/logo/logo.ico" type="image/x-icon">
     <title>Checkout | ABCinema</title>
 </head>
 
-<body>
+<body style="height:100vh; flex-direction:column;">
     <!-- Nav bar -->
     <div class="header">
-        <a href="movíes.php">
+        <a href="movies.php">
             <img class=logo src="images/logo/logo.png">
         </a>
         <div class="header-left">
             <a href="#movies" alt="Contact">Movies</a>
-            <a href="#about" alt="About">About us</a>
+            <a href="about_us.html" alt="About">About us</a>
         </div>
         <div class="header-right">
-            <a href="#"><img src="images/icons/basket.svg" alt="Checkout" /></a>
+            <a class="active" href="#"><img src="images/icons/basket.svg" alt="Checkout" /></a>
             <a href="#"><img src="images/icons/profile.svg" alt="Profile" /></a>
         </div>
     </div>
-
-    <!-- ShoppingCart -->
-    <div class="container">
-        <h1>Shopping Cart</h1>
-
-        <?php if (count($items) > 0): ?>
-            <table>
-                <tr>
-                    <th id="small-col">Item No.</th>
-                    <th>Information</th>
-                    <th>No. of tickets</th>
-                    <th>Total Cost</th>
-                </tr>
-                <?php foreach ($items as $item): ?>
+    <main style="flex:1;">
+        <!-- ShoppingCart -->
+        <div class="container">
+            <h1>Shopping Cart</h1>
+            <!-- <?php if (count($items) > 0): ?> -->
+                <table>
                     <tr>
-                        <td>1</td>
-                        <td>
-                        <div class="container-ticket">
-                            <img src="images/movie_poster/vertical/avatar.jpg" alt="avatar">
-                            <div class="info">
-                                <h2>Movie Title</h2>
-                                <p>Cinema Number:</p>
-                            </div>
-                        </div>
-                        </td>
-                        <td> 2 (1030am)
-                            <br> Seat 1, 2
-                            <br>
-                            <br> 1 (930pm)
-                            <br> Seat 4
-                        </td>
-                        <td> $18.40</td>
-
+                        <th id="small-col">Item</th>
+                        <th>Information</th>
+                        <th>No. of tickets</th>
+                        <th>Total Cost</th>
                     </tr>
-                <?php endforeach; ?>
-            </table>
+                    <?php foreach ($items as $item): ?>
+                        <tr>
+                            <td>1</td>
+                            <td>
+                            <div class="container-ticket">
+                                <img src="images/movie_poster/vertical/avatar.jpg" alt="avatar">
+                                <div class="info">
+                                    <h2>Movie Title</h2>
+                                    <p>Cinema Number:</p>
+                                </div>
+                            </div>
+                            </td>
+                            <td> 
+                                2
+                                <br> 14/12/2024, 1030
+                                <br> Seat 1, 2
+                                <br>
+                                <br> 1
+                                <br> 23/12/2024, 2130
+                                <br> Seat 4
+                            </td>
+                            <td> $18.40</td>
 
-            <div class="total-price">
-                <strong>Total Price:</strong> $<?php echo number_format($totalPrice, 2); ?>
-            </div>
-            <button onclick="alert('Your booking has been confirmed and sent to your email.')">Checkout</button>
-        <?php else: ?>
-            <p>Your cart is empty.</p>
-        <?php endif; ?>
+                        </tr>
+                    <?php endforeach; ?>
+                </table>
 
-    </div>
+                <div class="total-price">
+                    <strong>Total Price:</strong> $<?php echo number_format($totalPrice, 2); ?>
+                    <br>
+                    <button onclick="alert('Your booking has been confirmed and sent to your email.')">Checkout</button>
+                </div>
+                
+            <?php else: ?>
+                <p>Your cart is empty.</p>
+            <?php endif; ?>
+        </div>
+    </main>
 
     <!-- Footer -->
     <footer>

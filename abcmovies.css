@@ -3,6 +3,14 @@ html, body {
     margin: 0px;
     padding: 0px;
 }
+body{
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+footer {
+  margin-top: auto;
+}
 
 /* Add some basic styling */
 .movie {
@@ -79,18 +87,23 @@ hr.dotted {
   }
 
   .header-left a:hover{
-    text-decoration: underline;
+    background-color: rgba(252, 179, 84, 0.8);
+    color: black;
   }
 
   .header-right {
     float: right;
     align-items: center;
-    width:10%;
+    margin-right:5px;
   }
 
   .header-right img{
     width: 20px;
     margin: 20px;
+  }
+  .header-right a{
+    margin: 8px;
+    padding: 0px;
   }
 
    /* Change the background color on mouse-over */
@@ -131,6 +144,7 @@ hr.dotted {
 /* Hide the images by default */
 .mySlides {
   display: none;
+  width: 100%;
 }
 
 /* Next & previous buttons */
