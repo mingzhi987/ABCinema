@@ -103,7 +103,7 @@ if ($genresResult->num_rows > 0) {
             </div>
         </div>
         <div class="header-right">
-            <a href="checkout_1.php"><img src="images/icons/basket.svg" alt="Checkout" /></a>
+            <a href="checkout.php"><img src="images/icons/basket.svg" alt="Checkout" /></a>
             <?php if (isset($_SESSION['token_id'])): ?>
                 <a href="profile.php"><img src="images/icons/profile.svg" alt="Profile" /></a>
             <?php else: ?>

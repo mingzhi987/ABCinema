@@ -5,6 +5,8 @@
   font-style: normal;
 }
 
+
+
 /* Hide scrollbar for Chrome, Safari and Opera */
 ::-webkit-scrollbar {
   display: none;
@@ -27,6 +29,7 @@ html, body {
 
 body{
   background-color: #ececec;
+  font-family: Arial, Helvetica, sans-serif;
 }
 
 .content-wrapper {
@@ -342,11 +345,27 @@ hr.dotted {
     margin: 20px;
 }
 
+.movies-container button{
+  color: white;
+  padding: 8px 16px;
+  text-decoration: none;
+  border: 1px solid #000;
+  margin: 0 4px;
+  background-color: #000; /* Blue background */
+  border-radius: 5px;
+  transition-duration: 0.4s;
+}
+
+.movies-container button:hover {
+  background-color: #555; /* Darker blue for active page */
+  border: 1px solid #555;
+}
+
 #movieList{
   display: flex;
   flex-direction: row;
   flex-wrap: wrap;
-  width: 70%;
+  max-width: 70%;
 }
 
 .movies{
@@ -452,6 +471,8 @@ hr.dotted {
   border-radius: 5px;
   transition-duration: 0.4s;
 }
+
+
 
 .pagination button.active {
   background-color: #0056b3; /* Darker blue for active page */

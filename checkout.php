@@ -51,7 +51,7 @@ if ($result->num_rows > 0) {
 // Query to get movie screening details and seats in the shopping cart
 $sql = "
     SELECT 
-        st.ScreenTimeID, st.ScreenTimeDate, st.ScreenTimeCost, c.CinemaID, c.CinemaHall, m.MovieName, s.SeatID, s.SeatNumber
+        st.ScreenTimeID, st.ScreenTimeDate, st.ScreenTimeCost, c.CinemaID, c.CinemaHall, m.MovieName, s.SeatID, s.SeatNumber, m.MoviePoster
     FROM 
         shoppingscreening AS ss
     JOIN 
@@ -77,6 +77,32 @@ while ($row = $result->fetch_assoc()) {
 }
 
 
+// Group items by movie
+$groupedItems = [];
+foreach ($cartItems as $item) {
+    $movieName = $item['MovieName'];
+    if (!isset($groupedItems[$movieName])) {
+        $groupedItems[$movieName] = [
+            'MoviePoster' => $item['MoviePoster'],
+            'CinemaHall' => $item['CinemaHall'],
+            'Screenings' => [],
+            'TotalPrice' => 0.00
+        ];
+    }
+    
+    // Ensure Seats is an array
+    $seats = is_array($item['SeatNumber']) ? $item['SeatNumber'] : explode(',', $item['SeatNumber']);
+
+
+    $groupedItems[$movieName]['Screenings'][] = [
+        'ScreeningTime' => $item['ScreenTimeDate'],
+        'Seats' => $seats,
+        'Price' => $item['ScreenTimeCost']
+    ];
+    // Add to the total price for this movie
+    $groupedItems[$movieName]['TotalPrice'] += $item['ScreenTimeCost'];
+}
+
 // // Query to get items in the shopping cart
 // if ($shoppingCartID) {
 //     $query = "
@@ -98,100 +124,120 @@ while ($row = $result->fetch_assoc()) {
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="abcmovies.css">
     <link rel="stylesheet" href="cart.css">
+    <link rel="icon" href="images/logo/logo.ico" type="image/x-icon">
+    <link rel="stylesheet" href="about_us.css">
+    <script src="footerAdjuster.js"></script>
     <title>Checkout | ABCinema</title>
+    <script>
+        function checkoutAlert() {
+            if (confirm("Confirm checkout?")) {
+                document.getElementById('checkoutForm').submit();
+            }
+        }
+    </script>
 </head>
 
-<body>
+<body style="height: fit-content;">
     <!-- Nav bar -->
     <div class="header">
-        <a href="#default">
-            <img class=logo src="images/logo/logo.png" href="#">
-        </a>
-        <div class="header-left">
-            <a href="#contact" alt="Contact">Contact</a>
-            <a href="#about" alt="About">About us</a>
-        </div>
-        <div class="menu-icons">
-            <a href="#"><img src="images/icons/basket.svg" alt="Checkout" /></a>
-            <a href="#"><img src="images/icons/profile.svg" alt="Profile" /></a>
-        </div>
-    </div>
-
-    <!-- ShoppingCart -->
-    <div class="container">
-        <h1>Shopping Cart</h1>
-
-        <?php if (count($cartItems) > 0): ?>
-            <table>
-                <thead>
-                    <tr>
-                        <th>Movie Name</th>
-                        <th>Screening Time</th>
-                        <th>Cost</th>
-                        <th>Cinema Hall</th>
-                        <th>Seating No.</th>
-                    </tr>
-                </thead>
-               <tbody>
-                    <?php foreach ($cartItems as $item): ?>
-                            <tr>
-                                <td><?php echo htmlspecialchars($item['MovieName']); ?></td>
-                                <td><?php echo htmlspecialchars($item['ScreenTimeDate']); ?></td>
-                                <td><?php echo htmlspecialchars($item['ScreenTimeCost']); ?></td>
-                                <td><?php echo htmlspecialchars($item['CinemaHall']); ?></td>
-                                <td><?php echo htmlspecialchars($item['SeatNumber']); ?></td>
-                            </tr>
-                        <?php endforeach; ?>
-               </tbody>
-            </table>
-
-            <div class="total-price">
-                <strong>Total Price:</strong> $<?php echo number_format($totalPrice, 2); ?>
+        <div>
+            <a href="movies.php">
+                <img class=logo src="images/logo/logo.png">
+            </a>
+            <div class="header-left">
+                <a href="movies.php" alt="Movies">Movies</a>
+                <a href="about_us.html" alt="About us">About us</a>
             </div>
-           <form id="checkoutForm" method="post" action="insert_bookings.php">
-                <input type="hidden" name="cartItems" value='<?php echo json_encode($cartItems); ?>'>
-                <button class="checkout-btn" type="button" onclick="checkoutAlert()">Proceed to Checkout</button>
-            </form>
-        <?php else: ?>
-            <p>Your cart is empty.</p>
-        <?php endif; ?>
+        </div>
+        <div class="header-right">
+            <a class="active" href="checkout.php"><img src="images/icons/basket.svg" alt="Checkout" /></a>
+            <a href="profile.php"><img src="images/icons/profile.svg" alt="Profile" /></a>
+        </div>
     </div>
+    <main style="margin-top: 50px;
+    margin-bottom: 50px;">
+        <!-- ShoppingCart -->
+        <div class="container">
+            <h1>Shopping Cart</h1>
+            <!-- <?php if (count($cartItems) > 0): ?> -->
+                <table>
+                    <tr>
+                        <th id="small-col">Item</th>
+                        <th>Information</th>
+                        <th>No. of tickets</th>
+                        <th>Total Cost</th>
+                    </tr>
+                    <?php $index = 1; ?>
+                    <?php foreach ($groupedItems as $movieName => $movieData): ?>
+                        <tr>
+                        <td><?php echo $index++; ?></td>
+                            <td>
+                            <div class="container-ticket">
+                                <img src="<?php echo htmlspecialchars($movieData['MoviePoster']); ?>" alt="avatar">
+                                <div class="info">
+                                    <h2><?php echo htmlspecialchars($movieName); ?></h2>
+                                    <p>Cinema Number: <?php echo htmlspecialchars($movieData['CinemaHall']); ?></p>
+                                </div>
+                            </div>
+                            </td>
+                            <td class="no_of_tickets">
+                                <?php foreach ($movieData['Screenings'] as $screening): ?>
+                                    <?php echo count(value: $screening['Seats']); ?>
+                                    <br> <?php echo htmlspecialchars($screening['ScreeningTime']); ?>
+                                    <br> Seat <?php echo htmlspecialchars(implode(', ', $screening['Seats'])); ?>
+                                    <br><br>
+                                <?php endforeach; ?>
+                            </td>
+                            <td>
+                                $<?php echo number_format($movieData['TotalPrice'], 2); ?>
+                            </td>
+                        </tr>
+                    <?php endforeach; ?>
+                </table>
 
-    <!-- <div id="myAlert">
-        <h2>Booking Confirmed!</h2>
-        <p>Your booking has been confirmed and sent to your email.</p>
-        <button onclick="closeAlert()">Close</button>
-    </div> -->
+                <div class="total-price">
+                    <strong>Total Price:</strong> $<?php echo number_format($totalPrice, 2); ?>
+                    <br>
+                    <form id="checkoutForm" method="post" action="insert_bookings.php">
+                        <input type="hidden" name="cartItems" value='<?php echo json_encode($cartItems); ?>'>
+                        <button type="button" onclick="checkoutAlert()">Proceed to Checkout</button>
+                    </form>
+                </div>
+                
+            <?php else: ?>
+                <p>Your cart is empty.</p>
+            <?php endif; ?>
+        </div>
+    </main>
 
     <!-- Footer -->
-    <footer>
+    <footer id="footer">
         <div class="footer-container">
             <div class="row">
                 <div class="column-1"><img class="logo" src="images/logo/logo.png">
-                    <div class="footer-summary">Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat</div>
+                    <div class="footer-summary">Welcome to ABCinema, a modern cinema delivering immersive experiences with top-notch visuals, sound, and cosy seating. Discover blockbusters, indie films, and local gems—all designed to captivate and inspire.
+                    </div>
                 </div>
 
                 <div class="column-2">
-                    <h4>Links</h4>
-                    <ul>
-                        <li class="footer-links"><a href="http://demo.amytheme.com/movie/demo/elementor-single-cinema/" aria-current="page">Home</a></li>
-                        <li class="footer-links"><a href="http://demo.amytheme.com/movie/demo/elementor-single-cinema/coming-soon/">Coming Soon</a></li>
-                        <li class="footer-links"><a href="http://demo.amytheme.com/movie/demo/elementor-single-cinema/top-rated/">Top rated</a></li>
-                    </ul>
+                    <h2>Links</h2>
+                        <p class="footer-links"><a href="http://demo.amytheme.com/movie/demo/elementor-single-cinema/" aria-current="page">Home</a></p>
+                        <p class="footer-links"><a href="http://demo.amytheme.com/movie/demo/elementor-single-cinema/coming-soon/">Movies</a></p>
+                        <p class="footer-links"><a href="http://demo.amytheme.com/movie/demo/elementor-single-cinema/top-rated/">About us</a></p>
                 </div>
 
                 <div class="column-2">
-                    <h4>Contact Us</h4>
+                    <h2>Contact Us</h2>
                     123 Raffles Place #14-01 <br> Singapore 348023
                     <p>support@abcinema.com.sg
                     <p>+65 63498203
                 </div>
 
                 <div class="column-2">
-                    <h4>Follow Us</h4>
-                    <img src="images/icons/twitter-x.svg" alt="X (Twitter)" />
-                    <img src="images/icons/facebook.svg" alt="Facebook" />
-                    <img src="images/icons/instagram.svg" alt="Instagram" />
+                    <h2>Follow Us</h2>
+                    <img id="footer-icons" src="images/icons/twitter-x.svg" alt="X (Twitter)" />
+                    <img id="footer-icons" src="images/icons/facebook.svg" alt="Facebook" />
+                    <img id="footer-icons" src="images/icons/instagram.svg" alt="Instagram" />
                 </div>
             </div>
         </div>
@@ -199,15 +245,3 @@ while ($row = $result->fetch_assoc()) {
     </footer>
 
 </html>
-
-<script>
-    function checkoutAlert() {
-        if (confirm("Confirm checkout?")) {
-            document.getElementById('checkoutForm').submit();
-        }
-    }
-</script>
-
-<?php
-$conn->close();
-?>
