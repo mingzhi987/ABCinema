@@ -24,6 +24,7 @@ $conn->close();
     <link rel="stylesheet" href="abcmovies.css">
     <link rel="stylesheet" href="all_styles.css">
     <link rel="stylesheet" href="about_us.css">
+    <script src="footerAdjuster.js"></script>
 </head>
 <body>
     <!-- Nav bar -->
@@ -141,7 +142,7 @@ $conn->close();
         });
     </script>
    <!-- Footer -->
-   <footer>
+   <footer id="footer">
         <div class="footer-container">
             <div class="row">
                 <div class="column-1"><img class="logo" src="images/logo/logo.png">

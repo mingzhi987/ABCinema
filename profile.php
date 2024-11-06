@@ -132,6 +132,7 @@ if (isset($_POST['gift_booking']) && isset($_POST['recipient_email']) && isset($
             }
         }
     </script>
+    <script src="footerAdjuster.js"></script>
 </head>
 
 <body>
@@ -260,7 +261,7 @@ if (isset($_POST['gift_booking']) && isset($_POST['recipient_email']) && isset($
 </body>
 
 <!-- Footer -->
-<footer>
+<footer id="footer">
         <div class="footer-container">
             <div class="row">
                 <div class="column-1"><img class="logo" src="images/logo/logo.png">

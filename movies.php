@@ -86,6 +86,7 @@ if ($genresResult->num_rows > 0) {
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="abcmovies.css">
     <link rel="stylesheet" href="about_us.css">
+    <script src="footerAdjuster.js"></script>
     <title>Movies | ABCinema</title>
 </head>
 
@@ -102,7 +103,7 @@ if ($genresResult->num_rows > 0) {
             </div>
         </div>
         <div class="header-right">
-            <a href="checkout.php"><img src="images/icons/basket.svg" alt="Checkout" /></a>
+            <a href="checkout_1.php"><img src="images/icons/basket.svg" alt="Checkout" /></a>
             <?php if (isset($_SESSION['token_id'])): ?>
                 <a href="profile.php"><img src="images/icons/profile.svg" alt="Profile" /></a>
             <?php else: ?>
@@ -247,7 +248,7 @@ if ($genresResult->num_rows > 0) {
         </div>
         </div>
     </div>
-
+</body>
 <!-- Footer -->
 <footer>
     <div class="footer-container">
@@ -281,9 +282,6 @@ if ($genresResult->num_rows > 0) {
     </div>
     </div>
 </footer>
-
-</body>
-
 
 </html>
 

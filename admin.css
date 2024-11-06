@@ -1,0 +1,58 @@
+
+.admin-container{
+    margin: 20px;
+}
+.admin-container h1{
+    text-align: center;
+}
+#admin{
+    padding:0;
+    margin-left: 20px;
+}
+.movies-table{
+    flex:auto;
+    margin-left: auto;
+    margin-right: auto;
+    text-align: center;
+    margin-bottom: 10px;
+}
+.movies-table input{
+    text-align: center;
+}
+.dashboard{
+    flex:auto;
+    margin-left: auto;
+    margin-right: auto;
+    text-align: center;
+    content: "";
+    clear: both;
+    display: table;
+    border-style: groove;
+    box-shadow: inset;
+    margin-top: 10px;
+    min-width: 800px;
+}
+.dashboard-container{
+    flex:auto;
+    margin-left: auto;
+    margin-right: auto;
+    text-align: center;
+    content: "";
+    clear: both;
+    display: table;
+    min-width: 600px;
+}
+* {
+    box-sizing: border-box;
+  }
+  
+  .box {
+    float: left;
+    width: 30%;
+    padding: 20px;
+    text-align: center;
+    margin:10px 5px;
+    border-radius: 10px;
+    font-family: bold;
+    background-color:rgba(252, 179, 84, 0.6);
+  }

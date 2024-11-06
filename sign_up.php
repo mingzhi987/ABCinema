@@ -91,6 +91,7 @@
     <link rel="stylesheet" href="abcmovies.css">
     <link rel="stylesheet" href="all_styles.css">
     <link rel="stylesheet" href="about_us.css">
+    <script src="footerAdjuster.js"></script>
 </head>
 <body>
     <!-- Nav bar -->
@@ -140,7 +141,7 @@
             <p style="margin-bottom: 30px;">Already have an account? <a href="login.php">Back to log in</a></p>
         </div>
     </div>
-    <footer>
+    <footer id="footer">
     <div class="footer-container">
         <div class="row">
             <div class="column-1"><img class="logo" src="images/logo/logo.png">
