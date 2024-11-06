@@ -47,6 +47,14 @@
     $totalSeatsSoldResult = $conn->query($totalSeatsSoldQuery);
     $totalSeatsSold = $totalSeatsSoldResult->fetch_assoc()['totalSeatsSold'];
 
+    // Query to get movie details along with cinema ID and hall
+    $moviesQuery = "
+    SELECT m.MovieID, m.MovieName, m.MovieGenre, m.MovieLength, m.MovieRating, m.MovieDesc, m.MoviePoster, c.CinemaID, c.CinemaHall
+    FROM movies m
+    LEFT JOIN cinema c ON m.MovieID = c.MovieAllocated
+    ";
+    $moviesResult = $conn->query($moviesQuery);
+
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -94,39 +102,81 @@
             </div>
         </div>
         <div class="admin-container">
-            <form id="myForm">
                 <label for="function">Choose an item to edit:</label>
                 <select name="function" id="function-id" onchange="toggleTables()">
                     <option value="movies" selected>Movies</option>
                     <option value="screeningtime2">Screening Time</option>
                 </select>
-            </form>
             </select>
             <div id="movieTable">
                 <h1>Movies</h1>
+                <button type="button" onclick="addNewRow()">Add New Movie Row</button>
                 <table border="1" class="movies-table">
                     <tr>
                     <th>MovieID</th>
-                    <th>MovieName</th>
-                    <th>MovieGenre</th>
-                    <th>MovieLength</th>
-                    <th>MovieRating</th>
-                    <th>MovieDesc</th>
+                    <th>Movie Name</th>
+                    <th>Genre</th>
+                    <th>Movie Length</th>
+                    <th>Rating</th>
+                    <th>Description</th>
+                    <th>Cinema ID</th>
+                    <th>Cinema Hall</th>
                     <th></th>
                     </tr>
-                    <tr>
-                    <td><input type="text" value="1" readonly></td>
-                    <td><input type="text" value="Avatar" readonly></td>
-                    <td><input type="text" value="Sci-Fi" readonly></td>
-                    <td><input type="text" value="120" readonly></td>
-                    <td><input type="text" value="9" readonly></td>
-                    <td><textarea readonly> In the forest, far into the future</textarea></td>
-                    <td>
-                        <button type="button" onclick="alert('Item Deleted')">Delete</button>
-                    </td>
-                    </tr>
+                    <?php while ($row = $moviesResult->fetch_assoc()): ?>
+                        <tr>
+                        <form id="movieForm" method="POST" action="update_movie.php">
+                            <td><input type="text" name="MovieID" value="<?php echo $row['MovieID']; ?>" disabled></td>
+                            <td><input type="text" name="MovieName" value="<?php echo $row['MovieName']; ?>" disabled></td>
+                            <td><input type="text" name="MovieGenre" value="<?php echo $row['MovieGenre']; ?>" disabled></td>
+                            <td><input type="text" name="MovieLength" value="<?php echo $row['MovieLength']; ?>" disabled></td>
+                            <td><input type="text" name="MovieRating" value="<?php echo $row['MovieRating']; ?>" disabled></td>
+                            <td><textarea name="MovieDesc" disabled><?php echo $row['MovieDesc']; ?></textarea></td>
+                            <td><input type="text" name="CinemaID" value="<?php echo $row['CinemaID']; ?>" disabled></td>
+                            <td><input type="text" name="CinemaHall" value="<?php echo $row['CinemaHall']; ?>" disabled></td>
+                            <td>
+                                <button type="button" onclick="enableEditing(this.closest('tr'))">Modify</button>
+                                <button type="button" onclick="disableEditing(this.closest('tr'))">Update</button>
+                                <button type="button" onclick="deleteMovie(<?php echo $row['MovieID']; ?>)">Delete</button>
+                            </td> 
+                        </form>
+                        </tr>
+                    <?php endwhile; ?>
                 </table>
             </div>
+            <div id="addMovieTable" style="display: none;">
+                <h1>Add New Movie</h1>
+                <form id="addMovieForm" method="POST" action="add_movie.php">
+                    <table border="1" class="movies-table">
+                        <tr>
+                            <th>MovieID</th>
+                            <th>Movie Name</th>
+                            <th>Genre</th>
+                            <th>Movie Length</th>
+                            <th>Rating</th>
+                            <th>Description</th>
+                            <th>Cinema ID</th>
+                            <th>Cinema Hall</th>
+                            <th></th>
+                        </tr>
+                        <tr>
+                            <td><input type="text" name="MovieID" readonly></td>
+                            <td><input type="text" name="MovieName"></td>
+                            <td><input type="text" name="MovieGenre"></td>
+                            <td><input type="text" name="MovieLength"></td>
+                            <td><input type="text" name="MovieRating"></td>
+                            <td><textarea name="MovieDesc"></textarea></td>
+                            <td><input type="text" name="CinemaID"></td>
+                            <td><input type="text" name="CinemaHall"></td>
+                            <td>
+                                <button type="button" onclick="submitNewMovieForm()">Add</button>
+                                <button type="button" onclick="hideAddMovieTable()">Cancel</button>
+                            </td>
+                        </tr>
+                    </table>
+                </form>
+            </div>
+            
             <div id="screeningTable">
                 <h1>Screening Time</h1>
                 <table border="1" class="screening-table">
@@ -150,8 +200,6 @@
                     </tr>
                 </table>
             </div>
-            <button type="button" id="modifyButton">Modify</button>
-            <button type="button" id="updateButton" onclick="alert('Changes Updated')">Update</button>
         </div>
        
     </div>
@@ -195,9 +243,8 @@
 
 <script>
     // Get all text inputs and textareas in the form
+
     const inputs = document.querySelectorAll("#myForm input[type='text'], #myForm textarea");
-    const modifyButton = document.getElementById("modifyButton");
-    const updateButton = document.getElementById("updateButton");
 
     function toggleTables() {
         var selectedValue = document.getElementById('function-id').value;
@@ -215,22 +262,48 @@
     }
 
     // Function to make inputs editable
-    function enableEditing() {
-        inputs.forEach(input => input.readOnly = false);
+    function enableEditing(row) {
+        const wtf = row.querySelectorAll("#movieTable input[type='text'], #movieTable textarea");
+        wtf.forEach(wtf => wtf.removeAttribute("disabled"));
     }
 
     // Function to make inputs readonly
-    function disableEditing() {
-        inputs.forEach(input => input.readOnly = true);
+    function disableEditing(row) {
+        
+        if (confirm('Do you want to save these modifications?')) {
+             // Submit the closest form
+            const form = row.querySelector("form");
+            if (form) {
+                form.submit();
+            } else {
+                console.error("Form not found for the row.");
+            }
+            const inputs = row.querySelectorAll("#movieTable input[type='text'], #movieTable textarea");
+            inputs.forEach(input => input.disabled = true);
+        }
     }
 
-    // Event listeners for buttons
-    modifyButton.addEventListener("click", enableEditing);
-    updateButton.addEventListener("click", disableEditing);
+     // Function to show the add movie table
+     function addNewRow() {
+        var addMovieTable = document.getElementById('addMovieTable');
+        addMovieTable.style.display = 'flex';
+    }
+
+    // Function to submit the new movie form
+    function submitNewMovieForm() {
+        var form = document.getElementById('addMovieForm');
+        form.submit();
+    }
+
+    // Function to hide the add movie table
+    function hideAddMovieTable() {
+        var addMovieTable = document.getElementById('addMovieTable');
+        addMovieTable.style.display = 'none';
+    }
 
     // Set inputs to readonly by default
     toggleTables();
-    disableEditing();
+    //disableEditing();
 
 </script>
 
