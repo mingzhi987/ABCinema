@@ -45,7 +45,13 @@ if ($isLoggedIn) {
 
 // Retrieve available seats if screening date is selected
 $seats = [];
+$seatStatus = 1;
 if (isset($_POST['screening_date'])) {
+
+    if (empty($_POST['screening_date'])) {
+        $seatStatus = 0;
+    }
+
     $screening_date = intval($_POST['screening_date']);
     $sql = "SELECT SeatID, SeatNumber FROM seating 
             WHERE CinemaNumber IN (SELECT CinemaID FROM cinema WHERE MovieAllocated = ?) 
@@ -54,8 +60,13 @@ if (isset($_POST['screening_date'])) {
     $stmt->bind_param("ii", $movieID, $screening_date);
     $stmt->execute();
     $seatingResult = $stmt->get_result();
-    while ($row = $seatingResult->fetch_assoc()) {
-        $seats[] = $row;
+    
+    if ($seatStatus == 1) {
+        while ($row = $seatingResult->fetch_assoc()) {
+            $seats[] = $row;
+        }
+    } else{
+        $seats = [];
     }
 }
 
@@ -116,7 +127,11 @@ $conn->close();
                     </td>
                 </tr>
             </table>
-            <div style="margin-bottom: 30px; margin-left: 20px;">
+            <div style="margin-bottom: 30px;
+    margin-left: 20px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;">
             <?php if ($isLoggedIn): ?>
             <h2>Select Screening Date</h2>
             <form method="post" action="">
@@ -132,14 +147,13 @@ $conn->close();
             </form>
 
             <?php if (!empty($seats)): ?>
-            <h2>Select Seats</h2>
-            <form method="post" action="add_movie_to_cart.php">
-                    <input type="hidden" name="screening_date" value="<?php echo htmlspecialchars($screening_date); ?>">
-                    <div id="seats-container">
-                        <?php include 'display_test.php'; ?>
-                    </div>
-                    <button type="submit">Book Now</button>
-                </form>
+                <h2 id="seatheader" style="margin-top: 50px;">Select Seats</h2>
+                
+                <input type="hidden" name="screening_date" value="<?php echo htmlspecialchars($screening_date); ?>">
+                <div id="seats-container">
+                    <?php include 'display_test.php'; ?>
+                </div>
+                
             <?php endif; ?>
             <?php else: ?>
                 <p>Please log in or sign up to purchase tickets!</p>

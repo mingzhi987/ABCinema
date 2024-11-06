@@ -13,6 +13,8 @@ if (!isset($_SESSION['token_id'])) {
 $screening_date = $_POST['screening_date'];
 $selected_seats = isset($_POST['seats']) ? $_POST['seats'] : [];
 
+$selected_seats_array = explode(',', $selected_seats);
+
 // Create connection
 $conn = new mysqli($servername, $username, $password, $database);
 
@@ -38,7 +40,17 @@ if ($result->num_rows > 0) {
     exit;
 }
 
-// Check if the user has an existing shopping cart, if not create one
+// echo "ScreenTimeID: " . $screening_date;
+// echo "<br>";
+// echo "Seats: ";
+// print_r($selected_seats_array);
+
+// foreach ($selected_seats_array as $row) {
+//     echo "<br>";
+//     echo "seatID: ". $row;
+// }
+
+//Check if the user has an existing shopping cart, if not create one
 $sql = "SELECT ShoppingCartID FROM shoppingcart WHERE UserID = ?";
 $stmt = $conn->prepare(query: $sql);
 $stmt->bind_param("i", $userid);
@@ -56,14 +68,8 @@ if ($result->num_rows > 0) {
     $shoppingCartID = $stmt->insert_id;
 }
 
-// // Store the selected screening date in the shoppingscreening table
-// $sql = "INSERT INTO shoppingscreening (ShoppingCartID, ScreenTimeID) VALUES (?, ?)";
-// $stmt = $conn->prepare($sql);
-// $stmt->bind_param("ii", $shoppingCartID, $screening_date);
-// $stmt->execute();
 
-// Update the BookingState of the selected seats in the seating table, so that other users will not be able to see it
-foreach ($selected_seats as $seatID) {
+foreach ($selected_seats_array as $seatID) {
     $sql = "INSERT INTO shoppingscreening (ShoppingCartID, ScreenTimeID, SeatID) VALUES (?, ?, ?)";
     $stmt = $conn->prepare($sql);
     $stmt->bind_param("iii", $shoppingCartID, $screening_date, $seatID);

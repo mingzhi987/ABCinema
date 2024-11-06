@@ -9,10 +9,10 @@ if ($conn->connect_error) {
     die("Connection failed: " . $conn->connect_error);
 }
 
-
 $seats = [];
-if (isset($_POST['screening_date'])) {
-    $screening_date = intval($_POST['screening_date']);
+if (isset($_POST['new_showtime'])) {
+    $booking_id = intval($_POST['booking_id']);
+    $screening_date = intval($_POST['new_showtime']);
 
     // Get movieID from screeningtime2
     $sql = "SELECT ScreeningMovie FROM screeningtime2 WHERE ScreenTimeID = ?";
@@ -49,61 +49,6 @@ if (isset($_POST['screening_date'])) {
 
 // Close connection
 $conn->close();
-
-// // Retrieve all cinema numbers for the dropdown
-// $cinemaNumbers = [];
-// $cinemaResult = $conn->query("SELECT DISTINCT CinemaNumber FROM seating");
-// if ($cinemaResult->num_rows > 0) {
-//     while ($row = $cinemaResult->fetch_assoc()) {
-//         $cinemaNumbers[] = $row['CinemaNumber'];
-//     }
-// }
-
-// // Get selected cinema number from dropdown or default to the first option
-// $selectedCinemaNumber = isset($_GET['cinemaNumber']) ? $_GET['cinemaNumber'] : (isset($cinemaNumbers[0]) ? $cinemaNumbers[0] : null);
-
-// // Handle seat selection submission
-// if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['selectedSeats'])) {
-//     $selectedSeats = $_POST['selectedSeats'];
-//     $userID = 1; // Replace with actual user ID
-//     $shoppingCartID = 1; // Replace with actual shopping cart ID
-//     $movieName = "Sample Movie"; // Replace with actual movie name
-//     $showtime = "2024-11-06 18:00:00"; // Replace with actual showtime
-//     $cinemaID = $selectedCinemaNumber;
-//     $paymentDate = date("Y-m-d H:i:s"); // Current date and time
-
-//     // Insert each selected seat as a new booking
-//     foreach ($selectedSeats as $seatID) {
-//         $sql = "INSERT INTO booking (PaymentDate, UserID, ShoppingCartID, MovieName, Showtime, CinemaID, SeatID)
-//                 VALUES ('$paymentDate', $userID, $shoppingCartID, '$movieName', '$showtime', $cinemaID, $seatID)";
-//         $conn->query($sql);
-//     }
-// }
-
-// // Initialize seats array for seat arrangement display
-// $seats = [];
-// if ($selectedCinemaNumber !== null) {
-//     // Query to get seat information and check if occupied by joining with booking table
-//     $sql = "SELECT s.SeatID, s.SeatNumber, 
-//                    CASE WHEN b.SeatID IS NOT NULL THEN 1 ELSE 0 END AS occupied
-//             FROM seating s
-//             LEFT JOIN booking b ON s.SeatID = b.SeatID
-//             WHERE s.CinemaNumber = $selectedCinemaNumber";
-    
-//     $result = $conn->query($sql);
-
-//     // Populate the seats array with seat IDs, numbers, and occupancy status
-//     if ($result->num_rows > 0) {
-//         while ($row = $result->fetch_assoc()) {
-//             $seats[$row['SeatNumber']] = [
-//                 'SeatID' => $row['SeatID'],
-//                 'occupied' => $row['occupied']
-//             ];
-//         }
-//     }
-// }
-
-// $conn->close();
 ?>
 
 <!DOCTYPE html>
@@ -114,45 +59,44 @@ $conn->close();
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Seating Arrangement</title>
     <script>
-        let selectedSeatIDs = new Set();
-        let selectedSeatNumbers = new Set();
+        let selectedSeatID = null;
 
         function toggleSelection(seatElement, seatID, seatNumber) {
             if (seatElement.classList.contains('occupied')) return;
 
+            // Deselect previously selected seat
+            if (selectedSeatID && selectedSeatID !== seatID) {
+                const previousSelectedSeat = document.querySelector('.seat.selected');
+                if (previousSelectedSeat) {
+                    previousSelectedSeat.classList.remove('selected');
+                    const previousSeatInput = document.getElementById('seat_' + selectedSeatID);
+                    if (previousSeatInput) {
+                        previousSeatInput.checked = false;
+                    }
+                }
+            }
+
+            // Toggle current selection
             seatElement.classList.toggle('selected');
             const seatInput = document.getElementById('seat_' + seatID);
             seatInput.checked = seatElement.classList.contains('selected');
 
-            if (seatElement.classList.contains('selected')) {
-                // Add to sets if selected
-                selectedSeatIDs.add(seatID);
-                selectedSeatNumbers.add(seatNumber);
-            } else {
-                // Remove from sets if deselected
-                selectedSeatIDs.delete(seatID);
-                selectedSeatNumbers.delete(seatNumber);
-            }
+            // Update selected seat ID
+            selectedSeatID = seatElement.classList.contains('selected') ? seatID : null;
 
-            // Convert Set to Array for display
-            const selectedSeatIDsArray = Array.from(selectedSeatIDs);
-            const selectedSeatNumbersArray = Array.from(selectedSeatNumbers);
+            // Update hidden fields with selected seat ID and number
+            document.getElementById('selectedSeatID').value = selectedSeatID;
+            //document.getElementById('selectedSeatNumber').value = seatElement.classList.contains('selected') ? seatNumber : '';
 
-            // Update hidden fields with selected seat IDs and numbers
-            document.getElementById('selectedSeatIDs').value = selectedSeatIDsArray.join(',');
-            //document.getElementById('selectedSeatNumbers').value = selectedSeatNumbersArray.join(',');
-
-            // Display alert with selected seat IDs and numbers
-            alert('Selected Seat IDs: ' + selectedSeatIDsArray.join(', ') + '\nSelected Seat Numbers: ' + selectedSeatNumbersArray.join(', '));
-
-            toggleBookNowButton();
+            // Display alert with selected seat ID and number
+            alert('Selected Seat ID: ' + selectedSeatID + '\nSelected Seat Number: ' + seatNumber);
         }
 
         function toggleBookNowButton() {
             const bookNowButton = document.querySelector('button[type="submit"]');
             
             // If no seats are selected, disable the button
-            if (selectedSeatIDs.size === 0) {
+            if (selectedSeatID.size === 0) {
                 bookNowButton.disabled = true;
                 bookNowButton.title = "Please select at least one seat.";
             } else {
@@ -178,14 +122,17 @@ $conn->close();
 <body>
 
 <h3>Seating Arrangement for Cinema <?php echo htmlspecialchars($selectedCinemaNumber); ?></h3>
-<form method="POST" action="add_movie_to_cart.php">   
-<div id="cinema-container">
-</div>
-<div id="seating">
+<form method="POST" action="process_modify_booking.php">   
+<div id="seating" style="max-width: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    text-align: left;
+    align-items: center;">
         <div id="cinema-container">
-            <div id="screen"><p>Screen</p></div>
+            <div id="screen" style="width: 320px;"><p>Screen</p></div>
         </div>
-        <div id="seating">
+        <div id="seating1">
             <?php
             // Assuming 5 seats per row for simplicity
             $seatsPerRow = 5;
@@ -216,10 +163,11 @@ $conn->close();
         </div>
     </div>
     <!-- Hidden fields to store selected seat IDs and screening date -->
-    <input type="hidden" name="seats" id="selectedSeatIDs" value="">
-    <input type="hidden" name="screening_date" value="<?php echo htmlspecialchars($screening_date); ?>">
+    <input type="hidden" name="new_seat" id="selectedSeatID" value="">
+    <input type="hidden" name="booking_id" value="<?php echo htmlspecialchars($booking_id); ?>">
+    <input type="hidden" name="new_showtime" value="<?php echo htmlspecialchars($screening_date); ?>">
 
-    <button type="submit">Book now</button>
+    <button type="submit">Modify Booking</button>
 </form>
 </body>
 </html>

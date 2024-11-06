@@ -145,17 +145,13 @@ $conn->close();
             </form>
     
             <?php if (!empty($seats)): ?>
-            <form method="post" action="process_modify_booking.php">
+            <div style="margin-top: 50px;">
                 <input type="hidden" name="booking_id" value="<?php echo htmlspecialchars($bookingID); ?>">
                 <input type="hidden" name="new_showtime" value="<?php echo htmlspecialchars($new_showtime); ?>">
-                <label for="new_seat">New Seat:</label>
-                <select name="new_seat" id="new_seat" required>
-                    <?php foreach ($seats as $seat): ?>
-                        <option value="<?php echo htmlspecialchars($seat['SeatID']); ?>"><?php echo htmlspecialchars($seat['SeatNumber']); ?></option>
-                    <?php endforeach; ?>
-                </select>
-                <button type="submit" name="modify_booking">Modify Booking</button>
-            </form>
+    
+                <?php include 'display_seat_modify.php'; ?>
+                
+            </div>
             <?php endif; ?>
         </div>
     </div>

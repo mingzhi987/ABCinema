@@ -55,6 +55,42 @@
     ";
     $moviesResult = $conn->query($moviesQuery);
 
+
+    // Create or Update Screening Time
+    if (isset($_POST['saveScreeningTime'])) {
+        $ScreenTimeID = $_POST['ScreenTimeID'];
+        $ScreenTimeDate = $_POST['ScreenTimeDate'];
+        $ScreenTimeCost = $_POST['ScreenTimeCost'];
+        $ScreeningMovie = $_POST['ScreeningMovie'];
+
+        // Retrieve the CinemaID based on the selected ScreeningMovie
+        $query = "SELECT CinemaID FROM cinema WHERE MovieAllocated = '$ScreeningMovie' LIMIT 1";
+        $result = mysqli_query($conn, $query);
+        $row = mysqli_fetch_assoc($result);
+        $SeatingLocation = $row['CinemaID'];
+
+        if ($ScreenTimeID) {
+            // Update existing screening time
+            $query = "UPDATE screeningtime2 SET ScreenTimeDate='$ScreenTimeDate', ScreenTimeCost='$ScreenTimeCost', SeatingLocation='$SeatingLocation', ScreeningMovie='$ScreeningMovie' WHERE ScreenTimeID='$ScreenTimeID'";
+        } else {
+            // Insert new screening time
+            $query = "INSERT INTO screeningtime2 (ScreenTimeDate, ScreenTimeCost, SeatingLocation, ScreeningMovie) VALUES ('$ScreenTimeDate', '$ScreenTimeCost', '$SeatingLocation', '$ScreeningMovie')";
+        }
+        mysqli_query($conn, $query);
+        header('Location: admin.php');
+    }
+
+    // Delete Screening Time
+    if (isset($_GET['deleteScreenTimeID'])) {
+        $ScreenTimeID = $_GET['deleteScreenTimeID'];
+        $query = "DELETE FROM screeningtime2 WHERE ScreenTimeID='$ScreenTimeID'";
+        mysqli_query($conn, $query);
+        header('Location: admin.php');
+    }
+
+    // Fetch Screening Times
+    $screeningTimes = mysqli_query($conn, "SELECT * FROM screeningtime2");
+
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -179,30 +215,56 @@
             
             <div id="screeningTable">
                 <h1>Screening Time</h1>
+                <button type="button" onclick="showAddEditScreeningTimeForm()">Add New Screening Time</button>
                 <table border="1" class="screening-table">
                     <tr>
-                    <th>ScreenTimeID</th>
-                    <th>ScreenTimeDate</th>
-                    <th>ScreenTimeCost</th>
-                    <th>SeatingLocation</th>
-                    <th>ScreeningMovie</th>
-                    <th>Delete Item</th>
+                        <th>ScreenTimeID</th>
+                        <th>ScreenTimeDate</th>
+                        <th>ScreenTimeCost</th>
+                        <th>SeatingLocation</th>
+                        <th>ScreeningMovie</th>
+                        <th>Actions</th>
                     </tr>
+                    <?php while ($screeningTime = mysqli_fetch_assoc($screeningTimes)) { ?>
                     <tr>
-                    <td>1</td>
-                    <td>23/12/2024 15:00</td>
-                    <td>15.00</td>
-                    <td>2</td>
-                    <td>Avatar</td>
-                    <td>
-                        <button type="button" onclick="alert('Item Deleted')">Delete</button>
-                    </td>
+                        <td><?php echo $screeningTime['ScreenTimeID']; ?></td>
+                        <td><?php echo $screeningTime['ScreenTimeDate']; ?></td>
+                        <td><?php echo $screeningTime['ScreenTimeCost']; ?></td>
+                        <td><?php echo $screeningTime['SeatingLocation']; ?></td>
+                        <td><?php echo $screeningTime['ScreeningMovie']; ?></td>
+                        <td>
+                            <button type="button" onclick='showAddEditScreeningTimeForm(<?php echo json_encode($screeningTime); ?>)'>Edit</button>
+                            <button type="button" onclick="location.href='admin.php?deleteScreenTimeID=<?php echo $screeningTime['ScreenTimeID']; ?>'">Delete</button>
+                        </td>
                     </tr>
+                    <?php } ?>
                 </table>
             </div>
         </div>
        
     </div>
+    <div id="addEditScreeningTimeForm" style="display:none;">
+    <h1 id="formTitle">Add/Edit Screening Time</h1>
+    <form id="screeningTimeForm" method="post" action="admin.php">
+        <input type="hidden" name="ScreenTimeID" id="ScreenTimeID">
+        <label for="ScreenTimeDate">Date:</label>
+        <input type="datetime-local" name="ScreenTimeDate" id="ScreenTimeDate" required>
+        <label for="ScreenTimeCost">Cost:</label>
+        <input type="number" step="0.01" name="ScreenTimeCost" id="ScreenTimeCost" required>
+        <label for="ScreeningMovie">Movie:</label>
+        <select name="ScreeningMovie" id="ScreeningMovie" required>
+            <?php
+            // Fetch movies from the database
+            $movies = mysqli_query($conn, "SELECT MovieID, MovieName FROM movies");
+            while ($movie = mysqli_fetch_assoc($movies)) {
+                echo "<option value='{$movie['MovieID']}'>{$movie['MovieName']}</option>";
+            }
+            ?>
+        </select>
+        <button type="submit" name="saveScreeningTime">Save</button>
+        <button type="button" onclick="hideAddEditScreeningTimeForm()">Cancel</button>
+    </form>
+</div>
 </body>
     <main style="flex-grow: 1;">
     <!-- Footer -->
@@ -299,6 +361,26 @@
     function hideAddMovieTable() {
         var addMovieTable = document.getElementById('addMovieTable');
         addMovieTable.style.display = 'none';
+    }
+
+    function showAddEditScreeningTimeForm(screeningTime = null) {
+        document.getElementById('addEditScreeningTimeForm').style.display = 'block';
+        if (screeningTime) {
+            document.getElementById('formTitle').innerText = 'Edit Screening Time';
+            document.getElementById('ScreenTimeID').value = screeningTime.ScreenTimeID;
+            document.getElementById('ScreenTimeDate').value = screeningTime.ScreenTimeDate;
+            document.getElementById('ScreenTimeCost').value = screeningTime.ScreenTimeCost;
+            document.getElementById('SeatingLocation').value = screeningTime.SeatingLocation;
+            document.getElementById('ScreeningMovie').value = screeningTime.ScreeningMovie;
+        } else {
+            document.getElementById('formTitle').innerText = 'Add Screening Time';
+            document.getElementById('screeningTimeForm').reset();
+            document.getElementById('SeatingLocation').value = '';
+        }
+    }
+
+    function hideAddEditScreeningTimeForm() {
+        document.getElementById('addEditScreeningTimeForm').style.display = 'none';
     }
 
     // Set inputs to readonly by default
