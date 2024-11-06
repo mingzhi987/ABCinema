@@ -96,13 +96,16 @@ $conn->close();
             <?php endif; ?>
         </div>
     </div>
-    <div class="body-content">
+    <div class="body-content" style="display: flex;
+    width: 70%;
+    flex-direction: column;
+    margin: 0 auto; margin-bottom: 50px;">
         <h1 style="margin-top: 30px; margin-bottom: 30px; text-align: center;">Booking Page</h1>
-        <div class="movie-detail">
+        <div class="movie-detail" style="background-color: #fff;">
             <table>
                 <tr>
                     <td>
-                    <img src="<?php echo htmlspecialchars($movie['MoviePoster']); ?>" alt="<?php echo htmlspecialchars($movie['MovieName']); ?>" style="width: 300px;">
+                    <img src="<?php echo htmlspecialchars($movie['MoviePoster']); ?>" alt="<?php echo htmlspecialchars($movie['MovieName']); ?>" style="width: 30vh;">
                     </td>
                     <td>
                         <h1><?php echo htmlspecialchars($movie['MovieName']); ?></h1>
@@ -110,41 +113,39 @@ $conn->close();
                         <p><strong>Length:</strong> <?php echo htmlspecialchars($movie['MovieLength']); ?> minutes</p>
                         <p><strong>Synopsis:</strong> <?php echo htmlspecialchars($movie['MovieDesc']); ?></p>
                         <p><strong>Rating:</strong> <?php echo htmlspecialchars($movie['MovieRating']); ?></p>
-    
-                        <?php if ($isLoggedIn): ?>
-                        <h2>Select Screening Date</h2>
-                        <form method="post" action="">
-                            <label for="screening_date">Screening Date:</label>
-                            <select name="screening_date" id="screening_date" required onchange="this.form.submit()">
-                                <option value="">Select a date</option>
-                                <?php while ($screening = $screeningResult->fetch_assoc()): ?>
-                                    <option value="<?php echo htmlspecialchars($screening['ScreenTimeID']); ?>" <?php echo (isset($screening_date) && $screening_date == $screening['ScreenTimeID']) ? 'selected' : ''; ?>>
-                                        <?php echo htmlspecialchars($screening['ScreenTimeDate']); ?>
-                                    </option>
-                                <?php endwhile; ?>
-                            </select>
-                        </form>
-    
-                        <?php if (!empty($seats)): ?>
-                        <h2>Select Seats</h2>
-                        <form method="post" action="add_movie_to_cart.php">
-                            <input type="hidden" name="screening_date" value="<?php echo htmlspecialchars(string: $screening_date); ?>">
-                            <div id="seats-container">
-                                <?php foreach ($seats as $seat): ?>
-                                    <input type="checkbox" name="seats[]" value="<?php echo htmlspecialchars($seat['SeatID']); ?>" id="seat_<?php echo htmlspecialchars($seat['SeatID']); ?>">
-                                    <label for="seat_<?php echo htmlspecialchars($seat['SeatID']); ?>"><?php echo htmlspecialchars($seat['SeatNumber']); ?></label><br>
-                                <?php endforeach; ?>
-                            </div>
-                            <button type="submit">Book Now</button>
-                        </form>
-                        <?php endif; ?>
-                        <?php else: ?>
-                            <p>Please log in or sign up to purchase tickets!</p>
-                            <a href="login.php"><button>Log In / Sign Up</button></a>
-                        <?php endif; ?>
                     </td>
                 </tr>
             </table>
+            <div style="margin-bottom: 30px; margin-left: 20px;">
+            <?php if ($isLoggedIn): ?>
+            <h2>Select Screening Date</h2>
+            <form method="post" action="">
+                <label for="screening_date">Screening Date:</label>
+                <select name="screening_date" id="screening_date" required onchange="this.form.submit()">
+                    <option value="">Select a date</option>
+                    <?php while ($screening = $screeningResult->fetch_assoc()): ?>
+                        <option value="<?php echo htmlspecialchars($screening['ScreenTimeID']); ?>" <?php echo (isset($screening_date) && $screening_date == $screening['ScreenTimeID']) ? 'selected' : ''; ?>>
+                            <?php echo htmlspecialchars($screening['ScreenTimeDate']); ?>
+                        </option>
+                    <?php endwhile; ?>
+                </select>
+            </form>
+
+            <?php if (!empty($seats)): ?>
+            <h2>Select Seats</h2>
+            <form method="post" action="add_movie_to_cart.php">
+                    <input type="hidden" name="screening_date" value="<?php echo htmlspecialchars($screening_date); ?>">
+                    <div id="seats-container">
+                        <?php include 'display_test.php'; ?>
+                    </div>
+                    <button type="submit">Book Now</button>
+                </form>
+            <?php endif; ?>
+            <?php else: ?>
+                <p>Please log in or sign up to purchase tickets!</p>
+                <a href="login.php"><button>Log In / Sign Up</button></a>
+            <?php endif; ?>
+            </div>
         </div>
     </div>
 
