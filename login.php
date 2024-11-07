@@ -116,7 +116,7 @@ $conn->close();
             </script>";
         } else {
             // User not found
-            echo "<p>Invalid username or password. Please try again.</p>";
+            echo "<script>alert('Invalid username or password. Please try again.')</script>";
         }
 
         // Close the statement and connection

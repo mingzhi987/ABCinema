@@ -15,11 +15,11 @@ if (isset($_POST['screening_date'])) {
     $screening_date = intval($_POST['screening_date']);
 
     // Get movieID from screeningtime2
-    $sql = "SELECT ScreeningMovie FROM screeningtime2 WHERE ScreenTimeID = ?";
+    $sql = "SELECT ScreeningMovie, ScreenTimeCost FROM screeningtime2 WHERE ScreenTimeID = ?";
     $stmt = $conn->prepare($sql);
     $stmt->bind_param("i", $screening_date);
     $stmt->execute();
-    $stmt->bind_result($movieID);
+    $stmt->bind_result($movieID, $screenTimeCost);
     $stmt->fetch();
     $stmt->close();
 
@@ -116,6 +116,7 @@ $conn->close();
     <script>
         let selectedSeatIDs = new Set();
         let selectedSeatNumbers = new Set();
+        let selectedCount = 0;
 
         function toggleSelection(seatElement, seatID, seatNumber) {
             if (seatElement.classList.contains('occupied')) return;
@@ -128,10 +129,12 @@ $conn->close();
                 // Add to sets if selected
                 selectedSeatIDs.add(seatID);
                 selectedSeatNumbers.add(seatNumber);
+                selectedCount++;
             } else {
                 // Remove from sets if deselected
                 selectedSeatIDs.delete(seatID);
                 selectedSeatNumbers.delete(seatNumber);
+                selectedCount--;
             }
 
             // Convert Set to Array for display
@@ -140,10 +143,9 @@ $conn->close();
 
             // Update hidden fields with selected seat IDs and numbers
             document.getElementById('selectedSeatIDs').value = selectedSeatIDsArray.join(',');
-            //document.getElementById('selectedSeatNumbers').value = selectedSeatNumbersArray.join(',');
-
-            // Display alert with selected seat IDs and numbers
-            alert('Selected Seat IDs: ' + selectedSeatIDsArray.join(', ') + '\nSelected Seat Numbers: ' + selectedSeatNumbersArray.join(', '));
+            // Update the selected seat count display
+            document.getElementById('selectedCount').innerText = selectedCount;
+            //alert('Selected Seat IDs: ' + selectedSeatIDsArray.join(', ') + '\nSelected Seat Numbers: ' + selectedSeatNumbersArray.join(', '));
 
             toggleBookNowButton();
         }
@@ -172,7 +174,7 @@ $conn->close();
     .occupied { background-color: red; }
     .not-occupied { background-color: green; }
     .non-existent { background-color: grey; }
-    .selected { border: 2px solid blue; }
+    .selected { background-color: #ffa513; border: 2px solid blue; }
 </style>
 
 <body>
@@ -187,7 +189,9 @@ $conn->close();
         </div>
         <div id="seating">
             <?php
-            // Assuming 5 seats per row for simplicity
+            $occupiedCount = 0;
+            $notOccupiedCount = 0;
+            
             $seatsPerRow = 5;
             $rows = ['A', 'B']; // Define rows
 
@@ -203,6 +207,13 @@ $conn->close();
                     $seat = isset($seats[$seatNumber - 1]) ? $seats[$seatNumber - 1] : null;
                     $class = $seat ? ($seat['occupied'] ? 'occupied' : 'not-occupied') : 'non-existent';
                     $seatID = $seat ? $seat['SeatID'] : '';
+
+                     // Count based on the seat class
+                if ($class === 'occupied') {
+                    $occupiedCount++;
+                } elseif ($class === 'not-occupied') {
+                    $notOccupiedCount++;
+                }
             ?>
                     <div class="seat <?php echo $class; ?>" onclick="toggleSelection(this, <?php echo $seatID; ?>, <?php echo $seatNumber?>)">
                         <?php echo $seatNumber; ?>
@@ -213,6 +224,11 @@ $conn->close();
                 <?php endfor; ?>
                 </div>
             <?php endforeach; ?>
+            <div class="seat-counts">
+                <p>Total Occupied Seats: <?php echo $occupiedCount; ?></p>
+                <p>Total Not Occupied Seats: <?php echo $notOccupiedCount; ?></p>
+                <p>Total Selected Seats: <span id="selectedCount">0</span></p> <!-- JavaScript will update this -->
+            </div>
         </div>
     </div>
     <!-- Hidden fields to store selected seat IDs and screening date -->

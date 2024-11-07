@@ -210,6 +210,7 @@ if (isset($_POST['gift_booking']) && isset($_POST['recipient_email']) && isset($
         justify-content: center;
         width: 70%; flex-direction: column;">
             <h1>Tickets</h1>
+            <p>Modifications/Refunds are not allowed if less than 2 days prior screen time</p>
             <table border="1">
                 <tr>
                     <th>Payment Made</th>
@@ -268,7 +269,7 @@ if (isset($_POST['gift_booking']) && isset($_POST['recipient_email']) && isset($
                             echo "<button type='submit' name='refund_booking' class='btn btn-refund'>Refund</button>";
                             echo "</form>";
                         } else {
-                            echo "Modification/Refund not allowed within 2 days of showtime.";
+                            echo "Not Allowed!";
                         }
                         echo "</td>";
                         echo "</tr>";

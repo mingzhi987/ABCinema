@@ -59,6 +59,25 @@ $conn->close();
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Seating Arrangement</title>
     <script>
+        function adjustFooter() {
+            const footer = document.getElementById('footer');
+            const contentHeight = document.body.scrollHeight;
+            const screenHeight = screen.height - 200;
+
+            console.log(contentHeight);
+            console.log("screen heigh: " + screenHeight);
+
+            if (contentHeight < screenHeight) {
+                console.log("yes");
+                footer.style.position = 'absolute';
+                footer.style.bottom = '0';
+                footer.style.width = '100%';
+            } else {
+                console.log("no");
+                footer.style.position = 'relative';
+            }
+        }
+
         let selectedSeatID = null;
 
         function toggleSelection(seatElement, seatID, seatNumber) {
@@ -89,14 +108,15 @@ $conn->close();
             //document.getElementById('selectedSeatNumber').value = seatElement.classList.contains('selected') ? seatNumber : '';
 
             // Display alert with selected seat ID and number
-            alert('Selected Seat ID: ' + selectedSeatID + '\nSelected Seat Number: ' + seatNumber);
+            //alert('Selected Seat ID: ' + selectedSeatID + '\nSelected Seat Number: ' + seatNumber);
+            toggleBookNowButton();
         }
 
         function toggleBookNowButton() {
             const bookNowButton = document.querySelector('button[type="submit"]');
             
             // If no seats are selected, disable the button
-            if (selectedSeatID.size === 0) {
+            if (selectedSeatID == null) {
                 bookNowButton.disabled = true;
                 bookNowButton.title = "Please select at least one seat.";
             } else {
@@ -108,6 +128,7 @@ $conn->close();
         // Initial check on page load in case there are pre-selected seats
         window.onload = function() {
             toggleBookNowButton();
+            adjustFooter();
         };
     </script>
 </head>
@@ -116,7 +137,7 @@ $conn->close();
     .occupied { background-color: red; }
     .not-occupied { background-color: green; }
     .non-existent { background-color: grey; }
-    .selected { border: 2px solid blue; }
+    .selected { background-color: #ffa513; border: 2px solid blue; }
 </style>
 
 <body>

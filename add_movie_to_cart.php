@@ -82,6 +82,6 @@ $conn->close();
 // Redirect to profile page for now (by right will redirect back to index page which is not here yet)
 echo "<script>
         alert('Added to Cart successfully!');
-        window.location.href = 'profile.php'; 
+        window.location.href = 'checkout.php'; 
       </script>";
 ?>

@@ -66,7 +66,13 @@ $screeningResult = $stmt->get_result();
 
 // Retrieve available seats if screening date is selected
 $seats = [];
+$seatStatus = 1;
 if (isset($_POST['new_showtime'])) {
+
+    if (empty($_POST['new_showtime'])) {
+        $seatStatus = 0;
+    }
+
     $new_showtime = intval($_POST['new_showtime']);
     $sql = "SELECT SeatID, SeatNumber FROM seating 
             WHERE CinemaNumber IN (SELECT CinemaID FROM cinema WHERE MovieAllocated = (SELECT MovieID FROM movies WHERE MovieName = ?)) 
@@ -77,6 +83,14 @@ if (isset($_POST['new_showtime'])) {
     $seatingResult = $stmt->get_result();
     while ($row = $seatingResult->fetch_assoc()) {
         $seats[] = $row;
+    }
+
+    if ($seatStatus == 1) {
+        while ($row = $seatingResult->fetch_assoc()) {
+            $seats[] = $row;
+        }
+    } else{
+        $seats = [];
     }
 }
 
@@ -93,6 +107,7 @@ $conn->close();
     <link rel="stylesheet" href="abcmovies.css">
     <link rel="stylesheet" href="about_us.css">
     <link rel="stylesheet" href="change_booking.css">
+    <script src="footerAdjuster.js"></script>
 </head>
 <body>
     <div class="header">
@@ -159,7 +174,7 @@ $conn->close();
     
 </body>
 
-<footer>
+<footer id="footer">
         <div class="footer-container">
             <div class="row">
                 <div class="column-1"><img class="logo" src="images/logo/logo.png">

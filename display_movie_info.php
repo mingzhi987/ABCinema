@@ -123,7 +123,7 @@ $conn->close();
                         <p><strong>Genre:</strong> <?php echo htmlspecialchars($movie['MovieGenre']); ?></p>
                         <p><strong>Length:</strong> <?php echo htmlspecialchars($movie['MovieLength']); ?> minutes</p>
                         <p><strong>Synopsis:</strong> <?php echo htmlspecialchars($movie['MovieDesc']); ?></p>
-                        <p><strong>Rating:</strong> <?php echo htmlspecialchars($movie['MovieRating']); ?></p>
+                        <p><strong>Rating:</strong> <?php echo htmlspecialchars($movie['MovieRating']); ?> / 10</p>
                     </td>
                 </tr>
             </table>
@@ -164,34 +164,33 @@ $conn->close();
     </div>
 
    <!-- Footer -->
-<footer id="footer">
+   <footer id="footer">
     <div class="footer-container">
         <div class="row">
             <div class="column-1"><img class="logo" src="images/logo/logo.png">
-                <div class="footer-summary">Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat</div>
+                <div class="footer-summary">Welcome to ABCinema, a modern cinema delivering immersive experiences with top-notch visuals, sound, and cosy seating. Discover blockbusters, indie films, and local gems—all designed to captivate and inspire.
+                </div>
             </div>
 
             <div class="column-2">
-                <h4>Links</h4>
-                <ul>
-                    <li class="footer-links"><a href="http://demo.amytheme.com/movie/demo/elementor-single-cinema/" aria-current="page">Home</a></li>
-                    <li class="footer-links"><a href="http://demo.amytheme.com/movie/demo/elementor-single-cinema/coming-soon/">Coming Soon</a></li>
-                    <li class="footer-links"><a href="http://demo.amytheme.com/movie/demo/elementor-single-cinema/top-rated/">Top rated</a></li>
-                </ul>
+                <h2>Links</h2>
+                    <p class="footer-links"><a href="http://demo.amytheme.com/movie/demo/elementor-single-cinema/" aria-current="page">Home</a></p>
+                    <p class="footer-links"><a href="http://demo.amytheme.com/movie/demo/elementor-single-cinema/coming-soon/">Movies</a></p>
+                    <p class="footer-links"><a href="http://demo.amytheme.com/movie/demo/elementor-single-cinema/top-rated/">About us</a></p>
             </div>
 
             <div class="column-2">
-                <h4>Contact Us</h4>
-                123 Raffles Place #14-01 <br> Singapore 348023
-                <p>support@abcinema.com.sg
-                <p>+65 63498203
+                <h2>Contact Us</h2>
+                234 Film Street #01-01 <br> Singapore 690234
+                <p>contact@abcinema.com.sg
+                <p>+65 6349 8203
             </div>
 
             <div class="column-2">
-                <h4>Follow Us</h4>
-                <img src="images/icons/twitter-x.svg" alt="X (Twitter)" />
-                <img src="images/icons/facebook.svg" alt="Facebook" />
-                <img src="images/icons/instagram.svg" alt="Instagram" />
+                <h2>Follow Us</h2>
+                <img id="footer-icons" src="images/icons/twitter-x.svg" alt="X (Twitter)" />
+                <img id="footer-icons" src="images/icons/facebook.svg" alt="Facebook" />
+                <img id="footer-icons" src="images/icons/instagram.svg" alt="Instagram" />
             </div>
         </div>
     </div>
