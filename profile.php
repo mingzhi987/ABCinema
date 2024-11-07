@@ -41,9 +41,9 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['update_profile'])) {
     $newEmail = $_POST['email'];
     $newPassword = $_POST['password'];
 
-    $updateQuery = "UPDATE useraccount SET Email='$newEmail', Password='$newPassword' WHERE UserID = '$userID'";
+    $updateQuery = "UPDATE useraccount SET Email='$newEmail', Password='$newPassword' WHERE UserID = '$userid'";
     if ($conn->query($updateQuery) === TRUE) {
-        echo "<script>alert('Profile updated successfully!'); window.location.href = 'profile_zm.php';</script>";
+        echo "<script>alert('Profile updated successfully!'); window.location.href='profile.php'</script>";
     } else {
         echo "Error updating profile: " . $conn->error;
     }
@@ -131,6 +131,28 @@ if (isset($_POST['gift_booking']) && isset($_POST['recipient_email']) && isset($
                 form.submit();
             }
         }
+
+        document.addEventListener('DOMContentLoaded', function() {
+            var emailInput = document.getElementById('email');
+            var passwordInput = document.getElementById('password');
+
+            // Store initial values
+            var initialEmail = emailInput.value;
+            var initialPassword = passwordInput.value;
+
+            // Update values on change
+            emailInput.addEventListener('change', function() {
+                initialEmail = emailInput.value;
+            });
+
+            passwordInput.addEventListener('change', function() {
+                initialPassword = passwordInput.value;
+            });
+
+            // Optional: Log the initial values to the console for debugging
+            console.log('Initial Email:', initialEmail);
+            console.log('Initial Password:', initialPassword);
+        });
     </script>
     <script src="footerAdjuster.js"></script>
 </head>
@@ -164,13 +186,13 @@ if (isset($_POST['gift_booking']) && isset($_POST['recipient_email']) && isset($
                 <input type="text" name="username" value="<?php echo $user['Username']; ?>" disabled>
     
                 <label>Email: </label>
-                <input type="email" name="email" value="<?php echo $user['Email']; ?>">
+                <input type="email" name="email" id="email" value="<?php echo $user['Email']; ?>">
     
                 <label>Full Name: </label>
                 <input type="text" value="<?php echo $user['FullName']; ?>" disabled>
     
                 <label>Password: </label>
-                <input type="password" name="password" value="<?php echo $user['Password']; ?>">
+                <input type="password" name="password" id="password" value="<?php echo $user['Password']; ?>">
     
                 <label>Date of Birth: </label>
                 <input type="date" value="<?php echo $user['DateOfBirth']; ?>" disabled>

@@ -377,7 +377,7 @@ hr.dotted {
 .movies-column {
     box-sizing: border-box;
     float: center;
-    width: 25%;
+    /* width: 25%; */
     padding: 0 10px;
   }
   

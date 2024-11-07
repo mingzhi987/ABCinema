@@ -13,68 +13,38 @@ require 'dbconnection.php';
 //     die("Connection failed: " . $conn->connect_error);
 // }
 
-// Check if this is an AJAX request
-if (isset($_GET['ajax']) && $_GET['ajax'] === '1') {
-    // Fetch the filtered data for AJAX requests
+// Set pagination variables
+$moviesPerPage = 8;
+$page = isset($_GET['page']) ? (int)$_GET['page'] : 1;
+$offset = ($page - 1) * $moviesPerPage;
 
-    // Pagination and filter variables
-    $moviesPerPage = 8;
-    $page = isset($_GET['page']) ? (int)$_GET['page'] : 1;
-    $offset = ($page - 1) * $moviesPerPage;
+// Retrieve selected filter and search criteria
+$selectedGenre = isset($_GET['genre']) ? $_GET['genre'] : 'all';
+$searchTerm = isset($_GET['search']) ? strtolower($_GET['search']) : '';
 
-    // Set search and filter variables
-    $genreFilter = isset($_GET['genre']) && $_GET['genre'] !== "all" ? $_GET['genre'] : "";
-    $search = isset($_GET['search']) ? strtolower(trim($_GET['search'])) : "";
-
-    // SQL query with filters
-    $query = "SELECT * FROM movies WHERE 1=1";
-
-    if ($genreFilter) {
-        $query .= " AND MovieGenre = '" . $conn->real_escape_string($genreFilter) . "'";
-    }
-
-    if ($search) {
-        $query .= " AND LOWER(MovieName) LIKE '%" . $conn->real_escape_string($search) . "%'";
-    }
-
-    $query .= " ORDER BY MovieID ASC LIMIT $offset, $moviesPerPage";
-    $result = $conn->query($query);
-
-    // Fetch movies
-    $movies = [];
-    if ($result->num_rows > 0) {
-        while ($row = $result->fetch_assoc()) {
-            $movies[] = $row;
-        }
-    }
-
-    // Fetch total count for pagination
-    $countQuery = "SELECT COUNT(*) AS total FROM movies WHERE 1=1";
-    if ($genreFilter) {
-        $countQuery .= " AND MovieGenre = '" . $conn->real_escape_string($genreFilter) . "'";
-    }
-    if ($search) {
-        $countQuery .= " AND LOWER(MovieName) LIKE '%" . $conn->real_escape_string($search) . "%'";
-    }
-    $countResult = $conn->query($countQuery);
-    $totalMovies = $countResult->fetch_assoc()['total'];
-
-    // Send JSON response
-    echo json_encode([
-        "movies" => $movies,
-        "totalMovies" => $totalMovies,
-    ]);
-    exit();
+// Generate SQL query based on filter and search criteria
+$whereClause = '';
+if ($selectedGenre !== 'all') {
+    $whereClause .= "WHERE MovieGenre = '" . $conn->real_escape_string($selectedGenre) . "'";
+}
+if (!empty($searchTerm)) {
+    $whereClause .= ($whereClause ? " AND " : "WHERE ") . "LOWER(MovieName) LIKE '%" . $conn->real_escape_string($searchTerm) . "%'";
 }
 
-// Fetch genres for dropdown
-$genresResult = $conn->query("SELECT DISTINCT MovieGenre FROM movies ORDER BY MovieGenre ASC");
-$genres = [];
-if ($genresResult->num_rows > 0) {
-    while ($genreRow = $genresResult->fetch_assoc()) {
-        $genres[] = $genreRow['MovieGenre'];
-    }
-}
+// Count the total number of movies with filter and search applied
+$totalMoviesQuery = "SELECT COUNT(*) FROM movies $whereClause";
+$totalMoviesResult = $conn->query($totalMoviesQuery);
+$totalMoviesRow = $totalMoviesResult->fetch_row();
+$totalMovies = $totalMoviesRow[0];
+$totalPages = ceil($totalMovies / $moviesPerPage);
+
+// Fetch movies data with pagination, filter, and search applied
+$query = "SELECT * FROM movies $whereClause ORDER BY MovieID ASC LIMIT $offset, $moviesPerPage";
+$result = $conn->query($query);
+
+// Fetch unique genres for dropdown filter
+$genresQuery = "SELECT DISTINCT MovieGenre FROM movies";
+$genresResult = $conn->query($genresQuery);
 ?>
 
 
@@ -123,19 +93,19 @@ if ($genresResult->num_rows > 0) {
                 <div class="mySlides fade">
                     <div class="numbertext">1 / 3</div>
                     <img src="https://i0.wp.com/theroughcutpod.com/wp-content/uploads/2023/01/Avatar_Twitter.jpeg?fit=1200%2C628&quality=89&ssl=1">
-                    <div class="text"><a href="abcinema/display_movie_info.php?movieID=12">Avatar</a></div>
+                    <div class="text"><a href="display_movie_info.php?movieID=12">Avatar</a></div>
                 </div>
     
                 <div class="mySlides fade">
                     <div class="numbertext">2 / 3</div>
                     <img src="https://dx35vtwkllhj9.cloudfront.net/paramountpictures/smile/images/regions/us/header.jpg">
-                    <div class="text"><a href="abcinema/display_movie_info.php?movieID=7">Smile</a></div>
+                    <div class="text"><a href="display_movie_info.php?movieID=7">Smile</a></div>
                 </div>
     
                 <div class="mySlides fade">
                     <div class="numbertext">3 / 3</div>
                     <img src="https://thesun.my/binrepository/inside-out-2-pixar_3662291_20231123094127.jpg">
-                    <div class="text"><a href="abcinema/display_movie_info.php?movieID=3">Inside Out 2</a></div>
+                    <div class="text"><a href="display_movie_info.php?movieID=3">Inside Out 2</a></div>
                 </div>
     
                 <!-- Next and previous buttons -->
@@ -159,98 +129,84 @@ if ($genresResult->num_rows > 0) {
                 <h1 class="movies-heading"> NOW SHOWING </h1>
                 <hr class="dotted" />
                 <div class="filters">
-            <select id="genreFilter" onchange="loadMovies()">
-                <option value="all">All Genres</option>
-                <?php foreach ($genres as $genre): ?>
-                    <option value="<?php echo ucwords(htmlspecialchars($genre)," "); ?>"><?php echo ucwords(htmlspecialchars($genre),"- "); ?></option>
-                <?php endforeach; ?>
-            </select>
-            <input type="text" id="searchInput" placeholder="Search by Movie Name">
-            <button onclick="applySearch()">Search</button>
+                    <!-- Filter and Search Bar -->
+                    <div class="filter-bar">
+                        <form id="filterForm" action="" method="get">
+                            <!-- Genre Filter Dropdown -->
+                            <label for="genre">Filter by Genre:</label>
+                            <select name="genre" id="genre" onchange="document.getElementById('filterForm').submit()">
+                                <option value="all" <?php if ($selectedGenre === 'all') echo 'selected'; ?>>All</option>
+                                <?php while ($genreRow = $genresResult->fetch_assoc()): ?>
+                                    <option value="<?php echo htmlspecialchars($genreRow['MovieGenre']); ?>" <?php if ($selectedGenre === $genreRow['MovieGenre']) echo 'selected'; ?>>
+                                        <?php echo htmlspecialchars($genreRow['MovieGenre']); ?>
+                                    </option>
+                                <?php endwhile; ?>
+                            </select>
+
+                            <!-- Search Box -->
+                            <label for="search">Search by Name:</label>
+                            <input type="text" name="search" id="search" value="<?php echo htmlspecialchars($searchTerm); ?>">
+                            <button type="submit">Search</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
         </div>
-    
-        <div class="nonsense" style="display: flex; justify-content: center;"><div id="movieList"></div></div>
-    
-        <div class="pagination" id="pagination"></div>
-    
-        <script>
-            // Load initial movie list
-            document.addEventListener("DOMContentLoaded", function() {
-                loadMovies();
-            });
-    
-            // Function to load movies with AJAX
-            function loadMovies(page = 1) {
-                const genre = document.getElementById("genreFilter").value;
-                const search = document.getElementById("searchInput").value.trim().toLowerCase();
-                
-                const xhr = new XMLHttpRequest();
-                xhr.open("GET", `movies.php?ajax=1&page=${page}&genre=${genre}&search=${encodeURIComponent(search)}`, true);
-                xhr.onload = function() {
-                    if (xhr.status === 200) {
-                        const data = JSON.parse(xhr.responseText);
-                        displayMovies(data.movies);
-                        displayPagination(page, data.totalMovies);
-                    }
-                };
-                xhr.send();
-            }
-    
-            // Function to display movies in the movieList div
-            function displayMovies(movies) {
-                const movieList = document.getElementById("movieList");
-                movieList.innerHTML = "";
-                
-                if (movies.length > 0) {
-                    movies.forEach(movie => {
-                        movieList.innerHTML += `
-                        <div class="movies-column">
-                        <div class="movies">
-                            <div class="movies-card">
-                                <h2>${movie.MovieName.charAt(0).toUpperCase()+ movie.MovieName.slice(1)}</h2>
-                                <img width="100" height="150" id="poster" src="`+ movie.MoviePoster+` " alt="`+movie.MovieName+`">
-                                <p><strong>Genre:</strong> ${movie.MovieGenre.charAt(0).toUpperCase()+ movie.MovieGenre.slice(1)}</p>
-                                <p><strong>Length:</strong> ${movie.MovieLength} mins</p>
-                                <p><strong>Rating:</strong> ${movie.MovieRating}/10</p>
-                                <a href="display_movie_info.php?movieID= ${movie.MovieID}); ?>">Book Movie</a>
-                            </div>
-                            </div>
-                        </div>
-                        `;
-                    });
-                } else {
-                    movieList.innerHTML = "<p>No movies found.</p>";
-                }
-            }
-    
-            // Function to display pagination
-            function displayPagination(currentPage, totalMovies) {
-                const pagination = document.getElementById("pagination");
-                pagination.innerHTML = "";
-    
-                const totalPages = Math.ceil(totalMovies / 10);
-                if (totalPages > 1) {
-                    for (let i = 1; i <= totalPages; i++) {
-                        pagination.innerHTML += `
-                            <button onclick="loadMovies(${i})" class="${i === currentPage ? 'active' : ''}">
-                                ${i}
-                            </button>
-                        `;
-                    }
-                }
-            }
-    
-            // Function to apply search
-            function applySearch() {
-                loadMovies();
-            }
-        </script>
+    <div class="nonsense" style="display: flex;
+    justify-content: center;
+    flex-direction: column;
+    align-items: center;">
+    <div class="movielisting" style="display: flex;
+    justify-content: center;
+    flex-direction: row;
+    flex-wrap: wrap;
+    max-width: 70%;">
+    <!-- Movie Display Section -->
+    <?php if ($result->num_rows > 0): ?>
+        <?php while ($row = $result->fetch_assoc()): ?>
+            <div class="movies-column">
+            <div class="movies">
+            <div class="movies-card" onclick="goToMovie(<?php echo $row['MovieID']; ?>)">
+                <h2><?php echo htmlspecialchars($row['MovieName']); ?></h2>
+                <img src="<?php echo htmlspecialchars($row['MoviePoster']); ?>" alt="<?php echo htmlspecialchars($row['MovieName']); ?>">
+                <p><strong>Genre:</strong> <?php echo htmlspecialchars($row['MovieGenre']); ?></p>
+                <p><strong>Length:</strong> <?php echo htmlspecialchars($row['MovieLength']); ?> mins</p>
+                <p><strong>Rating:</strong> <?php echo htmlspecialchars($row['MovieRating']); ?>/10</p>
+                <p class="read-more">
+                <?php
+                    $words = explode(' ', $row['MovieDesc']);
+                    echo implode(' ', array_slice($words, 0, 5)) . (count($words) > 10 ? '...' : '');
+                ?>
+                </p>
+                <a href="display_movie_info.php?movieID= <?php echo htmlspecialchars($row['MovieID']); ?>">Book Movie</a>
+            </div>
         </div>
         </div>
+        <?php endwhile; ?>
+    <?php else: ?>
+        <p>No movies found.</p>
+    <?php endif; ?>
+    </div>
+    </div>
+
+    <!-- Pagination -->
+    <div class="pagination">
+        <form action="" method="get">
+        <!-- Retain the filter and search criteria in pagination -->
+        <input type="hidden" name="genre" value="<?php echo htmlspecialchars($selectedGenre); ?>">
+        <input type="hidden" name="search" value="<?php echo htmlspecialchars($searchTerm); ?>">
+
+        <!-- Page Number Buttons -->
+        <?php for ($i = 1; $i <= $totalPages; $i++): ?>
+                <button type="submit" name="page" value="<?php echo $i; ?>"<?php if ($i === $page) echo ' style="font-weight: bold;"'; ?>>
+                    <?php echo $i; ?>
+                </button>
+            <?php endfor; ?>
+        </form>
     </div>
 </body>
-<!-- Footer -->
-<footer>
+
+<footer id="footer">
     <div class="footer-container">
         <div class="row">
             <div class="column-1"><img class="logo" src="images/logo/logo.png">
@@ -282,7 +238,6 @@ if ($genresResult->num_rows > 0) {
     </div>
     </div>
 </footer>
-
 </html>
 
 <script>
@@ -309,6 +264,30 @@ if ($genresResult->num_rows > 0) {
         slides[slideIndex-1].style.display = "block";
     }
 
+    /* When the user clicks on the button,
+toggle between hiding and showing the dropdown content */
+function sortbyFunction() {
+        document.getElementById("myDropdown").classList.toggle("show");
+    }
+
+    function filterFunction() {
+        var input, filter, ul, li, a, i;
+        input = document.getElementById("myInput");
+        filter = input.value.toUpperCase();
+        div = document.getElementById("myDropdown");
+        a = div.getElementsByTagName("a");
+        for (i = 0; i < a.length; i++) {
+            txtValue = a[i].textContent || a[i].innerText;
+            if (txtValue.toUpperCase().indexOf(filter) > -1) {
+                a[i].style.display = "";
+            } else {
+                a[i].style.display = "none";
+            }
+        }
+    }
+    function goToMovie(movieID) {
+            window.location.href = 'display_movie_info.php?movieID=' + movieID;
+        }
 </script>
 
 <?php

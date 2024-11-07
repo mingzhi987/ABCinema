@@ -180,42 +180,32 @@
                     <?php endwhile; ?>
                 </table>
             </div>
-            <div id="addMovieTable" style="display: none;">
-                <h1>Add New Movie</h1>
-                <form id="addMovieForm" method="POST" action="add_movie.php">
-                    <table border="1" class="movies-table">
-                        <tr>
-                            <th>MovieID</th>
-                            <th>Movie Name</th>
-                            <th>Genre</th>
-                            <th>Movie Length</th>
-                            <th>Rating</th>
-                            <th>Description</th>
-                            <th>Cinema ID</th>
-                            <th>Cinema Hall</th>
-                            <th></th>
-                        </tr>
-                        <tr>
-                            <td><input type="text" name="MovieID" readonly></td>
-                            <td><input type="text" name="MovieName"></td>
-                            <td><input type="text" name="MovieGenre"></td>
-                            <td><input type="text" name="MovieLength"></td>
-                            <td><input type="text" name="MovieRating"></td>
-                            <td><textarea name="MovieDesc"></textarea></td>
-                            <td><input type="text" name="CinemaID"></td>
-                            <td><input type="text" name="CinemaHall"></td>
-                            <td>
-                                <button type="button" onclick="submitNewMovieForm()">Add</button>
-                                <button type="button" onclick="hideAddMovieTable()">Cancel</button>
-                            </td>
-                        </tr>
-                    </table>
-                </form>
-            </div>
             
             <div id="screeningTable">
                 <h1>Screening Time</h1>
                 <button type="button" onclick="showAddEditScreeningTimeForm()">Add New Screening Time</button>
+                <div id="addEditScreeningTimeForm" style="display:none; margin: auto;">
+                    <h1 id="formTitle">Add/Edit Screening Time</h1>
+                    <form id="screeningTimeForm" method="post" action="admin.php">
+                        <input type="hidden" name="ScreenTimeID" id="ScreenTimeID">
+                        <label for="ScreenTimeDate">Date:</label>
+                        <input type="datetime-local" name="ScreenTimeDate" id="ScreenTimeDate" required>
+                        <label for="ScreenTimeCost">Cost:</label>
+                        <input type="number" step="0.01" name="ScreenTimeCost" id="ScreenTimeCost" required>
+                        <label for="ScreeningMovie">Movie:</label>
+                        <select name="ScreeningMovie" id="ScreeningMovie" required>
+                            <?php
+                            // Fetch movies from the database
+                            $movies = mysqli_query($conn, "SELECT MovieID, MovieName FROM movies");
+                            while ($movie = mysqli_fetch_assoc($movies)) {
+                                echo "<option value='{$movie['MovieID']}'>{$movie['MovieName']}</option>";
+                            }
+                            ?>
+                        </select>
+                        <button type="submit" name="saveScreeningTime">Save</button>
+                        <button type="button" onclick="hideAddEditScreeningTimeForm()">Cancel</button>
+                    </form>
+                </div>
                 <table border="1" class="screening-table">
                     <tr>
                         <th>ScreenTimeID</th>
@@ -266,7 +256,6 @@
     </form>
 </div>
 </body>
-    <main style="flex-grow: 1;">
     <!-- Footer -->
     <footer id="footer">
         <div class="footer-container">
@@ -299,9 +288,7 @@
             </div>
         </div>
         </div>
-    </main>
     </footer>
-</footer>
 
 <script>
     // Get all text inputs and textareas in the form
