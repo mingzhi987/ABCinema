@@ -122,20 +122,20 @@ if ($genresResult->num_rows > 0) {
                 <!-- Full-width images with number and caption text -->
                 <div class="mySlides fade">
                     <div class="numbertext">1 / 3</div>
-                    <img src="images/movie_poster/horizontal/img1.jpg">
-                    <div class="text">Jumanji</div>
+                    <img src="https://i0.wp.com/theroughcutpod.com/wp-content/uploads/2023/01/Avatar_Twitter.jpeg?fit=1200%2C628&quality=89&ssl=1">
+                    <div class="text"><a href="abcinema/display_movie_info.php?movieID=12">Avatar</a></div>
                 </div>
     
                 <div class="mySlides fade">
                     <div class="numbertext">2 / 3</div>
-                    <img src="images/movie_poster/horizontal/img2.jpg">
-                    <div class="text">Smile 2</div>
+                    <img src="https://dx35vtwkllhj9.cloudfront.net/paramountpictures/smile/images/regions/us/header.jpg">
+                    <div class="text"><a href="abcinema/display_movie_info.php?movieID=7">Smile</a></div>
                 </div>
     
                 <div class="mySlides fade">
                     <div class="numbertext">3 / 3</div>
-                    <img src="images/movie_poster/horizontal/img3.jpg">
-                    <div class="text">Star Wars</div>
+                    <img src="https://thesun.my/binrepository/inside-out-2-pixar_3662291_20231123094127.jpg">
+                    <div class="text"><a href="abcinema/display_movie_info.php?movieID=3">Inside Out 2</a></div>
                 </div>
     
                 <!-- Next and previous buttons -->
@@ -208,7 +208,7 @@ if ($genresResult->num_rows > 0) {
                         <div class="movies">
                             <div class="movies-card">
                                 <h2>${movie.MovieName.charAt(0).toUpperCase()+ movie.MovieName.slice(1)}</h2>
-                                <img width="100" height="150" id="poster" src="images/movie_poster/vertical/`+ movie.MoviePoster+` " alt="`+movie.MovieName+`">
+                                <img width="100" height="150" id="poster" src="`+ movie.MoviePoster+` " alt="`+movie.MovieName+`">
                                 <p><strong>Genre:</strong> ${movie.MovieGenre.charAt(0).toUpperCase()+ movie.MovieGenre.slice(1)}</p>
                                 <p><strong>Length:</strong> ${movie.MovieLength} mins</p>
                                 <p><strong>Rating:</strong> ${movie.MovieRating}/10</p>
