@@ -131,10 +131,10 @@ INSERT INTO `screeningtime2` (`ScreenTimeID`, `ScreenTimeDate`, `ScreenTimeCost`
 (1, '2024-11-12 12:00:00', 20.00, 1, 1),
 (2, '2024-11-12 15:00:00', 10.00, 1, 1),
 (3, '2024-11-12 18:00:00', 40.00, 1, 1),
-(4, '2024-11-14 12:00:00', 20.00, 1, 1),
-(6, '2024-11-14 18:00:00', 40.00, 1, 1),
-(8, '2024-11-09 15:00:00', 40.00, 2, 2),
-(9, '2024-11-08 15:00:00', 30.00, 2, 2);
+(4, '2025-11-14 12:00:00', 20.00, 1, 1),
+(6, '2025-11-14 18:00:00', 40.00, 1, 1),
+(8, '2024-12-09 15:00:00', 40.00, 2, 2),
+(9, '2024-12-08 15:00:00', 30.00, 2, 2);
 
 -- --------------------------------------------------------
 
@@ -226,10 +226,10 @@ CREATE TABLE `useraccount` (
 --
 
 INSERT INTO `useraccount` (`UserID`, `Username`, `Email`, `FullName`, `Password`, `DateOfBirth`, `login_token`, `admin`) VALUES
-(1, 'henry', 'henry@gmail.com.sg', 'Henry Stickmin', 'urmomgay', '1999-04-01', NULL, NULL),
+(1, 'henry', 'henry@gmail.com.sg', 'Henry Stickmin', 'henrystickmin', '1999-04-01', NULL, NULL),
 (2, 'john', 'chuacheehean@gmail.com', 'John Major', 'password', '1999-05-01', '9ac819c22be8dbe18481e26e163f3537', 1),
 (3, 'tom', 'tomson@yahoo.com', 'Tom Thompson', 'password', '2005-06-01', NULL, NULL),
-(4, 'lampa', 'chua1020@e.ntu.edu.sg', 'ni lampa tua', 'lanjiao', '1990-03-20', '', NULL);
+(4, 'chua', 'chua1020@e.ntu.edu.sg', 'chua1020', 'cntusg', '1990-03-20', '', NULL);
 
 --
 -- Indexes for dumped tables

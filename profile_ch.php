@@ -38,7 +38,7 @@ if ($result->num_rows > 0) {
 $sql = "SELECT * FROM booking 
         NATURAL JOIN shoppingcart 
         NATURAL JOIN screeningtime2 
-        WHERE UserID = ". $userid ."";
+        WHERE UserID = " . $userid . "";
 $query = $conn->prepare($sql);
 $query->execute();
 $bookingresult = $query->get_result();
@@ -55,12 +55,12 @@ $conn->close();
 
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <title>User Profile</title>
     <link rel="stylesheet" href="all_styles.css">
     <script>
-
         var detailCheckPw = false;
         var detailCheckEd = false;
 
@@ -69,15 +69,16 @@ $conn->close();
             detailCheckPw = !detailCheckPw;
             toggleSaveBtn(detailCheckPw, detailCheckEd);
         }
+
         function toggleEmailEdit() {
             document.getElementById("email").disabled = !document.getElementById("email").disabled;
             detailCheckEd = !detailCheckEd;
             toggleSaveBtn(detailCheckPw, detailCheckEd);
         }
 
-        function toggleSaveBtn(detailCheckPw, detailCheckEd){
+        function toggleSaveBtn(detailCheckPw, detailCheckEd) {
 
-            if (detailCheckPw || detailCheckEd){
+            if (detailCheckPw || detailCheckEd) {
                 document.getElementById("savedetails").disabled = false;
             } else {
                 document.getElementById("savedetails").disabled = true;
@@ -113,28 +114,28 @@ $conn->close();
             const data = `email=${encodeURIComponent(emailChanged ? email : "")}&password=${encodeURIComponent(passwordChanged ? password : "")}`;
             xhr.send(data);
         }
-
     </script>
 </head>
+
 <body>
     <h2>User Profile</h2>
     <p><strong>Username:</strong> <?php echo htmlspecialchars($user['Username']); ?></p>
     <p><strong>Full Name:</strong> <?php echo htmlspecialchars($user['FullName']); ?></p>
     <p><strong>Email:</strong> <?php echo htmlspecialchars($user['Email']); ?></p>
     <p><strong>Date of Birth:</strong> <?php echo htmlspecialchars($user['DateOfBirth']); ?></p>
-    <br/>
+    <br />
     <!-- Password field for editing -->
-    <p><strong>Edit Password:</strong> 
+    <p><strong>Edit Password:</strong>
         <input type="password" id="password" disabled>
         <input type="checkbox" onclick="togglePasswordEdit()"> Edit
     </p>
-    <p><strong>Edit Email:</strong> 
+    <p><strong>Edit Email:</strong>
         <input type="email" id="email" disabled>
         <input type="checkbox" onclick="toggleEmailEdit()"> Edit
     </p>
     <button id="savedetails" onclick="saveNewDetails()" disabled>Save Changes</button>
     <button onclick="location.href='logout.php'">Log Out</button>
-    <br/>
+    <br />
     <!-- Booking Details Section -->
     <h2>Your Bookings</h2>
 
@@ -162,9 +163,10 @@ $conn->close();
     <?php else: ?>
         <p>You have no tickets currently.</p>
     <?php endif; ?>
-    
+
     <p><a href="movies.php">Go to Home page</a></p>
 
 
 </body>
+
 </html>
