@@ -5,8 +5,4 @@ $password = ""; // replace with your MySQL password
 $database = "abcinema_db"; // replace with your database name
 //$database = "abcinema"; // replace with your second database name
 
-
-
 $conn = new mysqli($servername, $username, $password, $database);
-
-?>

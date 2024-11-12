@@ -4,7 +4,7 @@ function adjustFooter() {
     const screenHeight = screen.height - 200;
 
     console.log(contentHeight);
-    console.log("screen heigh: " + screenHeight);
+    console.log("screen height: " + screenHeight);
 
     if (contentHeight < screenHeight) {
         console.log("yes");
