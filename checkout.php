@@ -89,7 +89,7 @@ foreach ($cartItems as $item) {
             'TotalPrice' => 0.00
         ];
     }
-    
+
     // Ensure Seats is an array
     $seats = is_array($item['SeatNumber']) ? $item['SeatNumber'] : explode(',', $item['SeatNumber']);
 
@@ -160,18 +160,18 @@ foreach ($cartItems as $item) {
         <div class="container">
             <h1>Shopping Cart</h1>
             <!-- <?php if (count($cartItems) > 0): ?> -->
-                <table>
+            <table>
+                <tr>
+                    <th id="small-col">Item</th>
+                    <th>Information</th>
+                    <th>No. of tickets</th>
+                    <th>Total Cost</th>
+                </tr>
+                <?php $index = 1; ?>
+                <?php foreach ($groupedItems as $movieName => $movieData): ?>
                     <tr>
-                        <th id="small-col">Item</th>
-                        <th>Information</th>
-                        <th>No. of tickets</th>
-                        <th>Total Cost</th>
-                    </tr>
-                    <?php $index = 1; ?>
-                    <?php foreach ($groupedItems as $movieName => $movieData): ?>
-                        <tr>
                         <td><?php echo $index++; ?></td>
-                            <td>
+                        <td>
                             <div class="container-ticket">
                                 <img src="<?php echo htmlspecialchars($movieData['MoviePoster']); ?>" alt="avatar">
                                 <div class="info">
@@ -179,34 +179,34 @@ foreach ($cartItems as $item) {
                                     <p>Cinema Number: <?php echo htmlspecialchars($movieData['CinemaHall']); ?></p>
                                 </div>
                             </div>
-                            </td>
-                            <td class="no_of_tickets">
-                                <?php foreach ($movieData['Screenings'] as $screening): ?>
-                                    <?php echo count(value: $screening['Seats']); ?>
-                                    <br> <?php echo htmlspecialchars($screening['ScreeningTime']); ?>
-                                    <br> Seat <?php echo htmlspecialchars(implode(', ', $screening['Seats'])); ?>
-                                    <br><br>
-                                <?php endforeach; ?>
-                            </td>
-                            <td>
-                                $<?php echo number_format($movieData['TotalPrice'], 2); ?>
-                            </td>
-                        </tr>
-                    <?php endforeach; ?>
-                </table>
+                        </td>
+                        <td class="no_of_tickets">
+                            <?php foreach ($movieData['Screenings'] as $screening): ?>
+                                <?php echo count(value: $screening['Seats']); ?>
+                                <br> <?php echo htmlspecialchars($screening['ScreeningTime']); ?>
+                                <br> Seat <?php echo htmlspecialchars(implode(', ', $screening['Seats'])); ?>
+                                <br><br>
+                            <?php endforeach; ?>
+                        </td>
+                        <td>
+                            $<?php echo number_format($movieData['TotalPrice'], 2); ?>
+                        </td>
+                    </tr>
+                <?php endforeach; ?>
+            </table>
 
-                <div class="total-price">
-                    <strong>Total Price:</strong> $<?php echo number_format($totalPrice, 2); ?>
-                    <br>
-                    <form id="checkoutForm" method="post" action="insert_bookings.php">
-                        <input type="hidden" name="cartItems" value='<?php echo json_encode($cartItems); ?>'>
-                        <button type="button" onclick="checkoutAlert()">Proceed to Checkout</button>
-                    </form>
-                </div>
-                
-            <?php else: ?>
-                <p>Your cart is empty.</p>
-            <?php endif; ?>
+            <div class="total-price">
+                <strong>Total Price:</strong> $<?php echo number_format($totalPrice, 2); ?>
+                <br>
+                <form id="checkoutForm" method="post" action="insert_bookings.php">
+                    <input type="hidden" name="cartItems" value='<?php echo json_encode($cartItems); ?>'>
+                    <button type="button" onclick="checkoutAlert()">Proceed to Checkout</button>
+                </form>
+            </div>
+
+        <?php else: ?>
+            <p>Your cart is empty.</p>
+        <?php endif; ?>
         </div>
     </main>
 
@@ -221,14 +221,14 @@ foreach ($cartItems as $item) {
 
                 <div class="column-2">
                     <h2>Links</h2>
-                        <p class="footer-links"><a href="http://demo.amytheme.com/movie/demo/elementor-single-cinema/" aria-current="page">Home</a></p>
-                        <p class="footer-links"><a href="http://demo.amytheme.com/movie/demo/elementor-single-cinema/coming-soon/">Movies</a></p>
-                        <p class="footer-links"><a href="http://demo.amytheme.com/movie/demo/elementor-single-cinema/top-rated/">About us</a></p>
+                    <p class="footer-links"><a href="http://demo.amytheme.com/movie/demo/elementor-single-cinema/" aria-current="page">Home</a></p>
+                    <p class="footer-links"><a href="http://demo.amytheme.com/movie/demo/elementor-single-cinema/coming-soon/">Movies</a></p>
+                    <p class="footer-links"><a href="http://demo.amytheme.com/movie/demo/elementor-single-cinema/top-rated/">About us</a></p>
                 </div>
 
                 <div class="column-2">
                     <h2>Contact Us</h2>
-                    123 Raffles Place #14-01 <br> Singapore 348023
+                    123 Film Street #01-01 <br> Singapore 348023
                     <p>support@abcinema.com.sg
                     <p>+65 63498203
                 </div>

@@ -85,6 +85,12 @@ if ($genresResult->num_rows > 0) {
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="abcmovies.css">
     <link rel="stylesheet" href="about_us.css">
+    <!-- ScrollMagic -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/ScrollMagic/2.0.8/ScrollMagic.min.js"></script>
+    <!-- ScrollMagic GSAP Animation Plugin -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/ScrollMagic/2.0.8/plugins/animation.gsap.min.js"></script>
+    <!-- GSAP for animations -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.10.4/gsap.min.js"></script>
     <script src="footerAdjuster.js"></script>
     <title>Movies | ABCinema</title>
 </head>
@@ -206,21 +212,47 @@ if ($genresResult->num_rows > 0) {
                         movieList.innerHTML = "";
 
                         if (movies.length > 0) {
-                            movies.forEach(movie => {
-                                movieList.innerHTML += `
-                        <div class="movies-column">
-                        <div class="movies">
-                            <div class="movies-card">
-                                <h2>${movie.MovieName.charAt(0).toUpperCase()+ movie.MovieName.slice(1)}</h2>
-                                <img width="100" height="150" id="poster" src="` + movie.MoviePoster + ` " alt="` + movie.MovieName + `">
-                                <p><strong>Genre:</strong> ${movie.MovieGenre.charAt(0).toUpperCase()+ movie.MovieGenre.slice(1)}</p>
-                                <p><strong>Length:</strong> ${movie.MovieLength} mins</p>
-                                <p><strong>Rating:</strong> ${movie.MovieRating}/10</p>
-                                <a href="display_movie_info.php?movieID= ${movie.MovieID}); ?>">Book Movie</a>
-                            </div>
-                            </div>
-                        </div>
-                        `;
+                            const scrollMagicController = new ScrollMagic.Controller();
+
+                            movies.forEach((movie, index) => {
+                                const movieElement = document.createElement('div');
+                                movieElement.classList.add("movies-column");
+                                movieElement.innerHTML = `
+                                <div class="movies">
+                                    <div class="movies-card">
+                                        <h2>${movie.MovieName.charAt(0).toUpperCase() + movie.MovieName.slice(1)}</h2>
+                                        <img width="100" height="150" id="poster" src="${movie.MoviePoster}" alt="${movie.MovieName}">
+                                        <p><strong>Genre:</strong> ${movie.MovieGenre.charAt(0).toUpperCase() + movie.MovieGenre.slice(1)}</p>
+                                        <p><strong>Length:</strong> ${movie.MovieLength} mins</p>
+                                        <p><strong>Rating:</strong> ${movie.MovieRating}/10</p>
+                                        <a href="display_movie_info.php?movieID=${movie.MovieID}">Book Movie</a>
+                                    </div>
+                                </div>
+                            `;
+                                // Append movie element to the list
+                                movieList.appendChild(movieElement);
+
+                                // Create the animation effect
+                                const tween = gsap.fromTo(
+                                    movieElement, {
+                                        x: index % 2 === 0 ? -200 : 200,
+                                        opacity: 0
+                                    }, {
+                                        x: 0,
+                                        opacity: 1,
+                                        duration: 1,
+                                        ease: "power3.out"
+                                    }
+                                );
+
+                                // Create a ScrollMagic scene
+                                new ScrollMagic.Scene({
+                                        triggerElement: movieElement, // Each movie element triggers its own animation
+                                        triggerHook: 0.9, // Start the animation when the element is in the viewport
+                                        reverse: false, // Play the animation only once
+                                    })
+                                    .setTween(tween) // Add the animation to the scene
+                                    .addTo(scrollMagicController); // Add the scene to the ScrollMagic controller
                             });
                         } else {
                             movieList.innerHTML = "<p>No movies found.</p>";

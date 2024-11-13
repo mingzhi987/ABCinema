@@ -32,4 +32,3 @@ if (isset($_POST['screening_date']) && isset($_POST['movie_id'])) {
 
     echo json_encode($seats);
 }
-?>

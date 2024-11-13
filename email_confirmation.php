@@ -1,17 +1,7 @@
 <?php
 session_start();
 
-$servername = "localhost";  // Replace with your MySQL server name
-$username = "root";         // Replace with your MySQL username
-$password = "";             // Replace with your MySQL password
-$dbname = "abcinema";  // Replace with your database name
-
-// Create a connection to the MySQL database
-$conn = new mysqli($servername, $username, $password, $dbname);
-
-if ($conn->connect_error) {
-    die("Connection failed: " . $conn->connect_error);
-}
+require 'dbconnection.php';
 
 // Retrieve ShoppingCartID and user details
 $shoppingCartID = isset($_SESSION['ShoppingCartID']) ? $_SESSION['ShoppingCartID'] : 0;
