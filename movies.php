@@ -85,35 +85,35 @@ $genresResult = $conn->query($genresQuery);
     <!-- Top container -->
     <div class="content-wrapper">
         <div class="top-promotion">
-    
+
             <!-- Slideshow container -->
             <div class="slideshow-container">
-    
+
                 <!-- Full-width images with number and caption text -->
                 <div class="mySlides fade">
                     <div class="numbertext">1 / 3</div>
                     <img src="https://i0.wp.com/theroughcutpod.com/wp-content/uploads/2023/01/Avatar_Twitter.jpeg?fit=1200%2C628&quality=89&ssl=1">
                     <div class="text"><a href="display_movie_info.php?movieID=12">Avatar</a></div>
                 </div>
-    
+
                 <div class="mySlides fade">
                     <div class="numbertext">2 / 3</div>
                     <img src="https://dx35vtwkllhj9.cloudfront.net/paramountpictures/smile/images/regions/us/header.jpg">
                     <div class="text"><a href="display_movie_info.php?movieID=7">Smile</a></div>
                 </div>
-    
+
                 <div class="mySlides fade">
                     <div class="numbertext">3 / 3</div>
                     <img src="https://thesun.my/binrepository/inside-out-2-pixar_3662291_20231123094127.jpg">
                     <div class="text"><a href="display_movie_info.php?movieID=3">Inside Out 2</a></div>
                 </div>
-    
+
                 <!-- Next and previous buttons -->
                 <a class="prev" onclick="plusSlides(-1)">&#10094;</a>
                 <a class="next" onclick="plusSlides(1)">&#10095;</a>
             </div>
             <br>
-    
+
             <!-- The dots/circles -->
             <div style="text-align:center">
                 <span class="dot" onclick="currentSlide(1)"></span>
@@ -121,7 +121,7 @@ $genresResult = $conn->query($genresQuery);
                 <span class="dot" onclick="currentSlide(3)"></span>
             </div>
         </div>
-    
+
         <!-- Movies -->
         <div class="movies-container">
             <div class="movies-row">
@@ -152,58 +152,58 @@ $genresResult = $conn->query($genresQuery);
                 </div>
             </div>
         </div>
-    <div class="nonsense" style="display: flex;
+        <div class="nonsense" style="display: flex;
     justify-content: center;
     flex-direction: column;
     align-items: center;">
-    <div class="movielisting" style="display: flex;
+            <div class="movielisting" style="display: flex;
     justify-content: center;
     flex-direction: row;
     flex-wrap: wrap;
     max-width: 70%;">
-    <!-- Movie Display Section -->
-    <?php if ($result->num_rows > 0): ?>
-        <?php while ($row = $result->fetch_assoc()): ?>
-            <div class="movies-column">
-            <div class="movies">
-            <div class="movies-card" onclick="goToMovie(<?php echo $row['MovieID']; ?>)">
-                <h2><?php echo htmlspecialchars($row['MovieName']); ?></h2>
-                <img src="<?php echo htmlspecialchars($row['MoviePoster']); ?>" alt="<?php echo htmlspecialchars($row['MovieName']); ?>">
-                <p><strong>Genre:</strong> <?php echo htmlspecialchars($row['MovieGenre']); ?></p>
-                <p><strong>Length:</strong> <?php echo htmlspecialchars($row['MovieLength']); ?> mins</p>
-                <p><strong>Rating:</strong> <?php echo htmlspecialchars($row['MovieRating']); ?>/10</p>
-                <p class="read-more">
-                <?php
-                    $words = explode(' ', $row['MovieDesc']);
-                    echo implode(' ', array_slice($words, 0, 5)) . (count($words) > 10 ? '...' : '');
-                ?>
-                </p>
-                <a href="display_movie_info.php?movieID= <?php echo htmlspecialchars($row['MovieID']); ?>">Book Movie</a>
+                <!-- Movie Display Section -->
+                <?php if ($result->num_rows > 0): ?>
+                    <?php while ($row = $result->fetch_assoc()): ?>
+                        <div class="movies-column">
+                            <div class="movies">
+                                <div class="movies-card" onclick="goToMovie(<?php echo $row['MovieID']; ?>)">
+                                    <h2><?php echo htmlspecialchars($row['MovieName']); ?></h2>
+                                    <img src="<?php echo htmlspecialchars($row['MoviePoster']); ?>" alt="<?php echo htmlspecialchars($row['MovieName']); ?>">
+                                    <p><strong>Genre:</strong> <?php echo htmlspecialchars($row['MovieGenre']); ?></p>
+                                    <p><strong>Length:</strong> <?php echo htmlspecialchars($row['MovieLength']); ?> mins</p>
+                                    <p><strong>Rating:</strong> <?php echo htmlspecialchars($row['MovieRating']); ?>/10</p>
+                                    <p class="read-more">
+                                        <?php
+                                        $words = explode(' ', $row['MovieDesc']);
+                                        echo implode(' ', array_slice($words, 0, 5)) . (count($words) > 10 ? '...' : '');
+                                        ?>
+                                    </p>
+                                    <a href="display_movie_info.php?movieID= <?php echo htmlspecialchars($row['MovieID']); ?>">Book Movie</a>
+                                </div>
+                            </div>
+                        </div>
+                    <?php endwhile; ?>
+                <?php else: ?>
+                    <p>No movies found.</p>
+                <?php endif; ?>
             </div>
         </div>
+
+        <!-- Pagination -->
+        <div class="pagination">
+            <form action="" method="get">
+                <!-- Retain the filter and search criteria in pagination -->
+                <input type="hidden" name="genre" value="<?php echo htmlspecialchars($selectedGenre); ?>">
+                <input type="hidden" name="search" value="<?php echo htmlspecialchars($searchTerm); ?>">
+
+                <!-- Page Number Buttons -->
+                <?php for ($i = 1; $i <= $totalPages; $i++): ?>
+                    <button type="submit" name="page" value="<?php echo $i; ?>" <?php if ($i === $page) echo ' style="font-weight: bold;"'; ?>>
+                        <?php echo $i; ?>
+                    </button>
+                <?php endfor; ?>
+            </form>
         </div>
-        <?php endwhile; ?>
-    <?php else: ?>
-        <p>No movies found.</p>
-    <?php endif; ?>
-    </div>
-    </div>
-
-    <!-- Pagination -->
-    <div class="pagination">
-        <form action="" method="get">
-        <!-- Retain the filter and search criteria in pagination -->
-        <input type="hidden" name="genre" value="<?php echo htmlspecialchars($selectedGenre); ?>">
-        <input type="hidden" name="search" value="<?php echo htmlspecialchars($searchTerm); ?>">
-
-        <!-- Page Number Buttons -->
-        <?php for ($i = 1; $i <= $totalPages; $i++): ?>
-                <button type="submit" name="page" value="<?php echo $i; ?>"<?php if ($i === $page) echo ' style="font-weight: bold;"'; ?>>
-                    <?php echo $i; ?>
-                </button>
-            <?php endfor; ?>
-        </form>
-    </div>
 </body>
 
 <footer id="footer">
@@ -216,9 +216,8 @@ $genresResult = $conn->query($genresQuery);
 
             <div class="column-2">
                 <h2>Links</h2>
-                    <p class="footer-links"><a href="http://demo.amytheme.com/movie/demo/elementor-single-cinema/" aria-current="page">Home</a></p>
-                    <p class="footer-links"><a href="http://demo.amytheme.com/movie/demo/elementor-single-cinema/coming-soon/">Movies</a></p>
-                    <p class="footer-links"><a href="http://demo.amytheme.com/movie/demo/elementor-single-cinema/top-rated/">About us</a></p>
+                <p class="footer-links"><a href="movies.php">Movies</a></p>
+                <p class="footer-links"><a href="about_us.html">About us</a></p>
             </div>
 
             <div class="column-2">
@@ -238,6 +237,7 @@ $genresResult = $conn->query($genresQuery);
     </div>
     </div>
 </footer>
+
 </html>
 
 <script>
@@ -256,17 +256,21 @@ $genresResult = $conn->query($genresQuery);
     function showSlides(n) {
         let i;
         let slides = document.getElementsByClassName("mySlides");
-        if (n > slides.length) {slideIndex = 1}
-        if (n < 1) {slideIndex = slides.length}
+        if (n > slides.length) {
+            slideIndex = 1
+        }
+        if (n < 1) {
+            slideIndex = slides.length
+        }
         for (i = 0; i < slides.length; i++) {
             slides[i].style.display = "none";
         }
-        slides[slideIndex-1].style.display = "block";
+        slides[slideIndex - 1].style.display = "block";
     }
 
     /* When the user clicks on the button,
 toggle between hiding and showing the dropdown content */
-function sortbyFunction() {
+    function sortbyFunction() {
         document.getElementById("myDropdown").classList.toggle("show");
     }
 
@@ -285,9 +289,10 @@ function sortbyFunction() {
             }
         }
     }
+
     function goToMovie(movieID) {
-            window.location.href = 'display_movie_info.php?movieID=' + movieID;
-        }
+        window.location.href = 'display_movie_info.php?movieID=' + movieID;
+    }
 </script>
 
 <?php
