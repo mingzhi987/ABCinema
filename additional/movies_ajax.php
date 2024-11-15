@@ -166,7 +166,7 @@ if ($genresResult->num_rows > 0) {
                 <hr class="dotted" />
                 <h1 class="movies-heading"> NOW SHOWING </h1>
                 <hr class="dotted" />
-                <div class="filters">
+                <div class="filters" style="display: flex; justify-content: center;">
                     <select id="genreFilter" onchange="loadMovies()">
                         <option value="all">All Genres</option>
                         <?php foreach ($genres as $genre): ?>
@@ -195,7 +195,7 @@ if ($genresResult->num_rows > 0) {
                         const search = document.getElementById("searchInput").value.trim().toLowerCase();
 
                         const xhr = new XMLHttpRequest();
-                        xhr.open("GET", `movies.php?ajax=1&page=${page}&genre=${genre}&search=${encodeURIComponent(search)}`, true);
+                        xhr.open("GET", `movies_ajax.php?ajax=1&page=${page}&genre=${genre}&search=${encodeURIComponent(search)}`, true);
                         xhr.onload = function() {
                             if (xhr.status === 200) {
                                 const data = JSON.parse(xhr.responseText);
