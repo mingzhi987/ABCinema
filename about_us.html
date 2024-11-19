@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="abcmovies.css">
+    <link rel="stylesheet" href="about_us.css">
+    <script src="footerAdjuster.js"></script>
+    <title>About Us | ABCinema</title>
+</head>
+
+<body>
+    <!-- Nav bar -->
+    <div class="header">
+        <div>
+            <a href="movies.php">
+                <img class=logo src="images/logo/logo.png">
+            </a>
+            <div class="header-left">
+                <a href="movies.php" alt="Movies">Movies</a>
+                <a class="active" href="#" alt="About us">About us</a>
+            </div>
+        </div>
+        <div class="header-right">
+            <a href="checkout.php"><img src="images/icons/basket.svg" alt="Checkout" /></a>
+            <a href="profile.php"><img src="images/icons/profile.svg" alt="Profile" /></a>
+        </div>
+    </div>
+
+    <div class="content-container">
+        <div class="container-about-us">
+            <h1>About Us</h1>
+            <div class="centre-image">
+            <img src="images/about.jpg" height="15%" width="30%">
+            </div>
+            <div class="container">
+                <p>Welcome to ABCinema, where we create memorable movie experiences! At ABCinema, we’re dedicated to showcasing the best in cinematic entertainment. Whether it's a blockbuster hit or a hidden gem, our mission is to provide a premium experience with cutting-edge visuals, immersive sound, and luxurious comfort.</p>
+                <p>Located in the heart of the city, ABCinema combines technology and ambience to bring you a theatre experience like no other. Join us and discover a world where stories come to life on the big screen!</p>
+        
+                <div class="content-section">
+                    <!-- Office Address Section -->
+                    <div class="address">
+                        <h2><u>Our Office</u></h2>
+                        <p>ABCinema Headquarters</p>
+                        <p>234 Film Street #01-01</p>
+                        <p>Singapore 690234</p>
+                        <p>Email: contact@abcinema.com.sg</p>
+                        <p>Phone: +65 6349 8203</p>
+                        <p>Operating hours: 9am-5pm</p>
+                    </div>
+        
+                    <!-- FAQ Section -->
+                    <div class="faq">
+                        <h2><u>FAQs</u></h2>
+        
+                        <div class="question" onclick="toggleAnswer(0)">What are your opening hours?</div>
+                        <div class="answer">
+                            <p>We are open from 9 AM to 12 MN every day, including weekends and holidays.</p>
+                        </div>
+        
+                        <div class="question" onclick="toggleAnswer(1)">Do you offer group discounts?</div>
+                        <div class="answer">
+                            <p>Yes! Group discounts are available for groups of 10 or more. Contact us for details.</p>
+                        </div>
+        
+                        <div class="question" onclick="toggleAnswer(2)">Can I book tickets in advance?</div>
+                        <div class="answer">
+                            <p>Absolutely! Tickets can be booked online through our website or at our ticket counters.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</body> 
+<footer id="footer">
+    <div class="footer-container">
+        <div class="row">
+            <div class="column-1"><img class="logo" src="images/logo/logo.png">
+                <div class="footer-summary">Welcome to ABCinema, a modern cinema delivering immersive experiences with top-notch visuals, sound, and cosy seating. Discover blockbusters, indie films, and local gems—all designed to captivate and inspire.
+                </div>
+            </div>
+
+            <div class="column-2">
+                <h2>Links</h2>
+                    <p class="footer-links"><a href="movies.php">Movies</a></p>
+                    <p class="footer-links"><a href="about_us.html">About us</a></p>
+            </div>
+
+            <div class="column-2">
+                <h2>Contact Us</h2>
+                234 Film Street #01-01 <br> Singapore 690234
+                <p>contact@abcinema.com.sg
+                <p>+65 6349 8203
+            </div>
+
+            <div class="column-2">
+                <h2>Follow Us</h2>
+                <img id="footer-icons" src="images/icons/twitter-x.svg" alt="X (Twitter)" />
+                <img id="footer-icons" src="images/icons/facebook.svg" alt="Facebook" />
+                <img id="footer-icons" src="images/icons/instagram.svg" alt="Instagram" />
+            </div>
+        </div>
+    </div>
+    </div>
+</footer>
+
+</html>
+
+<script>
+        function toggleAnswer(index) {
+            const answers = document.querySelectorAll('.answer');
+            answers[index].style.display = answers[index].style.display === 'none' ? 'block' : 'none';
+        }
+</script>
